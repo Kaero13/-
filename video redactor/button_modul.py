@@ -6,17 +6,21 @@ from moviepy import VideoFileClip
 import os
 import shutil
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 import atexit
 pygame.init()
-
 
 
 def select_video_file():
     root = tk.Tk()
     root.withdraw()
 
-    file_path = filedialog.askopenfilename(title="Выберите видео файл",
+    videos_path = os.path.abspath('videos')
+    if not os.path.exists('videos'):
+        os.makedirs(videos_path)
+    file_path = filedialog.askopenfilename(
+        title="Выберите видео файл",
+        initialdir=videos_path,
         filetypes=[
             ("Видео файлы", "*.mp4 *.avi *.mov *.mkv *.wmv"),
             ("Все файлы", "*.*")
@@ -24,15 +28,20 @@ def select_video_file():
     root.destroy()
     return file_path
 
+def dowload_video_file():
+    root = tk.Tk()
+    root.withdraw()
 
-def position_el(cur_x, cur_y,screen_fon, video_width, video_height, button, rounded_rect):
-    global video_y, button_rect
-    fon = pygame.transform.scale(screen_fon, (video_width, video_height))
 
-    video_x = (cur_x - video_width)//2
-    button_rect = button.get_rect(center=(cur_x // 2, cur_y // 2 + 300))
-    rect_rect = rounded_rect.get_rect(center=(cur_x // 2, cur_y // 2 + 300))
-    return cur_x, cur_y
+    file_path = filedialog.askopenfilename(
+        title="Выберите видео файл",
+        filetypes=[
+            ("Видео файлы", "*.mp4 *.avi *.mov *.mkv *.wmv"),
+            ("Все файлы", "*.*")
+        ])
+    root.destroy()
+    return file_path
+
 
 def project_Folders():
     folders = [
@@ -67,3 +76,22 @@ def create_rounded_rectangle():
     pygame.draw.rect(rect_surface, border_color, (0, 0, 890, 520), width=3, border_radius=25)
     return rect_surface
 
+def select_error_massage():
+    root = tk.Tk()
+    root.withdraw()
+    messagebox.showerror("Ошибка выбора","Ошибка выбора. Выберите видео из папки videos.")
+
+def download_error_massage():
+    root = tk.Tk()
+    root.withdraw()
+    messagebox.showerror("Ошибка загрузки","Ошибка выбора. Загружаемый файл не является видеом.")
+
+def select_complete_massage():
+    root = tk.Tk()
+    root.withdraw()
+    messagebox.showerror("Действие выполнено","Файл был успешно выбран")
+
+def download_complete_massage():
+    root = tk.Tk()
+    root.withdraw()
+    messagebox.showerror("Действие выполнено","Файл был успешно загружен")

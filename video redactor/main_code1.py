@@ -2,6 +2,7 @@ from pathlib import Path
 import pygame
 import cv2
 import numpy as np
+from imageio.plugins.ffmpeg import download
 from moviepy import VideoFileClip
 from button_modul import *
 import os
@@ -35,18 +36,18 @@ video_area_height = rect_rect.height - 40
 #Кнопка Выбора видео из внутренней памяти
 select_button = pygame.image.load("Texture/select_button.png")
 select_button_rect = select_button.get_rect()
-select_button_rect.right = x
-select_button_rect.centery = y // 2 + 250
+select_button_rect.right = x - 375
+select_button_rect.centery = y // 2 + 335
 
 #Кнопка старт/стоп/пауза
-button = pygame.image.load('Texture/start_button.jpg')
-button_rect = button.get_rect(center=(x // 2, y // 2 + 300))
+button = pygame.image.load('Texture/start_button.png')
+button_rect = button.get_rect(center=(x // 2, y // 2 + 330))
 
 #Кнопка загрузки видео во внутрению память
 load_button = pygame.image.load('Texture/load_button.png')
 load_button_rect = load_button.get_rect()
-load_button_rect.right = x - 900
-load_button_rect.centery = y // 2 + 300
+load_button_rect.right = x - 700
+load_button_rect.centery = y // 2 + 330
 
 #Создание окна pygame
 screen = pygame.display.set_mode((x, y))
@@ -109,9 +110,7 @@ video_fps = cap.get(cv2.CAP_PROP_FPS)
 clock = pygame.time.Clock()
 pygame.mixer.music.load('Texture/WelcomVideo/vidio.wav')
 
-#Позиционирование Кнопок
-button_rect = button.get_rect(center=(x // 2, y // 2 + 300))
-x, y = position_el(x, y, screen_fon, video_area_width, video_area_height, button, rounded_rect)
+
 
 #Булевые пременные для работы видео, полноэкранного режима, проверки нажатия паузы, работы програииы и аудио
 fullscreen = False
@@ -147,18 +146,46 @@ while rab:
 
             #Загрузка во внутреннюю память
             elif load_button_rect.collidepoint(pygame.mouse.get_pos()):
-                selected_file = select_video_file()
-                if selected_file:
-                    shutil.move(selected_file, "videos")
+                dowloand_file = dowload_video_file()
+                if dowloand_file and dowloand_file != "":
+                    shutil.move(dowloand_file, "videos")
+                    download_complete_massage()
+                elif dowloand_file == "":
+                    pass
+                else:
+                    download_error_massage()
 
             #Выбор из внутренней памяти
             elif select_button_rect.collidepoint(pygame.mouse.get_pos()):
                 selected_file = select_video_file()
-                if selected_file:
-                    video_sel(selected_file, video_area_width, video_area_height)
 
-        #Полноэкранный режим
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
+                if selected_file and selected_file != "":
+                    # Получаем абсолютный путь к выбранному файлу и папке videos
+                    abs_selected = os.path.abspath(selected_file)
+                    abs_videos_dir = os.path.abspath("videos")
+
+                    # Проверяем нахождение в папке videos
+                    if os.path.commonpath([abs_selected, abs_videos_dir]) == abs_videos_dir:
+                        video_sel(selected_file, video_area_width, video_area_height)
+                        select_complete_massage()
+                    else:
+                        select_error_massage()
+                else:
+                    pass
+
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            mousedown = not mousedown
+
+            if mousedown:
+                pygame.mixer.music.pause()
+                if frame is not None:
+                    paused_frame = frame.copy()
+            else:
+                pygame.mixer.music.unpause()
+                paused_frame = None
+
+            #Полноэкранный режим
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_f:
             #Нажатие для входа и выхода
             if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
                 fullscreen = not fullscreen
@@ -166,13 +193,17 @@ while rab:
                     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
                     new_x, new_y = screen.get_size()
 
-                else:
-                    screen = pygame.display.set_mode((1200, 800))
-                    new_x, new_y = 1200, 800
 
                 #Проверка Позиции элементов и обновление координат при полноэкранном режиме
-                x, y = position_el(new_x, new_y, screen_fon, video_area_width, video_area_height, button, rounded_rect)
+                x, y = new_x, new_y
                 rect_rect = rounded_rect.get_rect(center=(x // 2, y // 2.7))
+                button_rect = button.get_rect(center=(x // 2, y // 2 + 370))
+                load_button_rect = load_button.get_rect()
+                load_button_rect.right = x - 900
+                load_button_rect.centery = y // 2 + 370
+                select_button_rect = select_button.get_rect()
+                select_button_rect.right = x - 580
+                select_button_rect.centery = y // 2 + 375
 
                 #Центрирование и подгонка размера в полноэкранном режиме
                 if 'cap' in globals():
@@ -194,8 +225,15 @@ while rab:
             fullscreen = not fullscreen
             screen = pygame.display.set_mode((1200, 800))
             new_x, new_y = 1200, 800
-            x, y = position_el(new_x, new_y, screen_fon, video_width, video_height, button, rounded_rect)
+            x, y = new_x, new_y
             rect_rect = rounded_rect.get_rect(center=(x // 2, y // 2.7))
+            button_rect = button.get_rect(center=(x // 2, y // 2 + 330))
+            load_button_rect = load_button.get_rect()
+            load_button_rect.right = x - 700
+            load_button_rect.centery = y // 2 + 330
+            select_button_rect = select_button.get_rect()
+            select_button_rect.right = x - 375
+            select_button_rect.centery = y // 2 + 335
 
             # Центрирование и подгонка размера в полноэкранном режиме
             if 'cap' in globals():
@@ -207,7 +245,6 @@ while rab:
                 cap.set(cv2.CAP_PROP_POS_FRAMES, curent_pos)
 
         #Возврат к прежним координатам кнопок
-        button_rect = button.get_rect(center=(x // 2, y // 2 + 300))
         screen_fon = pygame.transform.scale(screen_fon, (x, y))
 
 
