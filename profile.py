@@ -1,5 +1,7 @@
 import json
 import os
+from _ast import Pass
+
 import button_modul
 
 def fix_path(path):
@@ -16,16 +18,21 @@ def fix_path(path):
         return path
 
 def add_and_create_profile_to_json(Nik, Password, path, json_path, json_name = 'Profile_Data.json'):
-    full_output_path = os.path.dirname(fix_path(json_path), fix_path(json_name))
+    full_output_path = os.path.join(fix_path(json_path), fix_path(json_name))
 
     parent_dir = os.path.dirname(full_output_path)
     if parent_dir:
         os.makedirs(parent_dir, exist_ok=True)
 
     profile_dict = {}
-    profile_dict[Nik] = {"Password" : fix_path(Password), "Video_path" : fix_path(path)}
+    if len(Nik)>1 and len(Pass)>1:
+        complete = True
+        profile_dict[Nik] = {"Password" : fix_path(Password), "Video_path" : fix_path(path)}
+    else:
+        complete = False
+
     #Запись Ника пользователя, пароля и пути к папке проекта
-    if not os.path.exists(json_path):
+    if not os.path.exists(full_output_path):
         with open(full_output_path, 'w', encoding="utf-8") as f:
             json.dump(profile_dict, f, ensure_ascii=False, indent=2)
     #Запись Нового профиля в существующий файл
@@ -41,8 +48,9 @@ def add_and_create_profile_to_json(Nik, Password, path, json_path, json_name = '
                 json.dump(combined_data, f, ensure_ascii=False, indent=2)
             except json.JSONDecodeError:
                 json.dump(profile_dict, f, ensure_ascii=False, indent=2)
-
-    button_modul.profile_complete_massage()
-
+    if complete:
+        button_modul.profile_complete_massage()
+    else:
+        button_modul.pol_error_massage()
 
 
