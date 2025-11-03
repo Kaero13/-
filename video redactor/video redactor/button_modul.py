@@ -78,32 +78,39 @@ def select_error_massage():
     root = tk.Tk()
     root.withdraw()
     messagebox.showerror("Ошибка выбора","Ошибка выбора. Выберите видео из папки videos.")
+    return None
 
 def download_error_massage():
     root = tk.Tk()
     root.withdraw()
     messagebox.showerror("Ошибка загрузки","Ошибка выбора. Загружаемый файл не является видеом.")
+    return None
 
 def select_complete_massage():
     root = tk.Tk()
     root.withdraw()
     messagebox.showinfo("Действие выполнено","Файл был успешно выбран")
+    return None
 
 def download_complete_massage():
     root = tk.Tk()
     root.withdraw()
     messagebox.showinfo("Действие выполнено","Файл был успешно загружен")
+    return None
 
 def profile_error_massage():
     root = tk.Tk()
     root.withdraw()
     messagebox.showerror("Ошибка","Профиль уже существует")
+
+
 def pol_error_massage():
-    root = tk.Tk()
-    root.withdraw()
-    messagebox.showerror("Ошибка","Заполните поля: Имя пользователя, Пароль, Путь к папке")
+     root = tk.Tk()
+     root.withdraw()
+     messagebox.showerror("Ошибка","Заполните поля: Имя пользователя, Пароль, Путь к папке")
+
 
 def profile_complete_massage():
-    root = tk.Tk()
-    root.withdraw()
-    messagebox.showinfo("Действие выполнено", "Профиль успешно добавлен")
+     root = tk.Tk()
+     root.withdraw()
+     messagebox.showinfo("Действие выполнено", "Профиль успешно добавлен")

@@ -11,7 +11,7 @@ import tkinter as tk
 from tkinter import filedialog
 import atexit
 from profile_seletc_window import*
-from select_video import sssd
+from select_video import select_video_window
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 project_Folders()       #создание папок приложения
@@ -131,6 +131,7 @@ rab = True
 ret = False
 frame = None
 paused_frame = None
+main_path = None
 
 #Тело программы
 while rab:
@@ -157,22 +158,37 @@ while rab:
             elif load_button_rect.collidepoint(pygame.mouse.get_pos()):
                 dowloand_file = dowload_video_file()
                 if dowloand_file and dowloand_file != "":
-                    shutil.move(dowloand_file, "videos")
-                    download_complete_massage()
+                    shutil.move(dowloand_file, main_path)
+                    a = download_complete_massage()
+                    if a == None:
+                        pygame.display.flip()
+
                 elif dowloand_file == "":
                     pass
                 else:
-                    download_error_massage()
+                    a_er = download_error_massage()
+                    if a_er == None:
+                        pygame.display.flip()
+
             elif profile_button_rect.collidepoint(pygame.mouse.get_pos()):
-                global main_path
-                main_path = select_window()
-                print(main_path)
+                # global main_path
+                dubl = None
+                if main_path == None:
+                    main_path = select_window()
+                    if main_path is None:
+                        pygame.display.flip()
+                else:
+                    dubl = dubl_click()
+                    if dubl is None:
+                        pygame.display.flip()
+
+
             #Выбор из внутренней памяти
             elif select_button_rect.collidepoint(pygame.mouse.get_pos()):
-                print(main_path)
-                selected_file = sssd(main_path)
-                print(selected_file)
+                selected_file = select_video_window(main_path)
 
+                if selected_file is None:
+                    pygame.display.flip()
 
                 if selected_file and selected_file != "":
                     # Получаем абсолютный путь к выбранному файлу и папке videos
@@ -182,7 +198,9 @@ while rab:
                     # Проверяем нахождение в папке videos
                     if os.path.commonpath([abs_selected, abs_videos_dir]) == abs_videos_dir:
                         video_sel(selected_file, video_area_width, video_area_height)
-                        select_complete_massage()
+                        b = select_complete_massage()
+                        if b == None:
+                            pygame.display.flip()
                     else:
                         select_error_massage()
                 else:

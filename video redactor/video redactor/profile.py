@@ -25,7 +25,6 @@ def add_and_create_profile_to_json(Nik, Password, path, json_path, json_name = '
         os.makedirs(parent_dir, exist_ok=True)
 
     profile_dict = {}
-    print(Pass)
     if len(Nik)>1 and len(str(Pass))>1:
         complete = True
         profile_dict[Nik] = {"Password" : fix_path(Password), "Video_path" : fix_path(path)}
@@ -49,9 +48,5 @@ def add_and_create_profile_to_json(Nik, Password, path, json_path, json_name = '
                 json.dump(combined_data, f, ensure_ascii=False, indent=2)
             except json.JSONDecodeError:
                 json.dump(profile_dict, f, ensure_ascii=False, indent=2)
-    if complete:
-        button_modul.profile_complete_massage()
-    else:
-        button_modul.pol_error_massage()
 
 

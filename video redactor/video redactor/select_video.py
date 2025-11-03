@@ -13,12 +13,19 @@ class Select_video:
 class UI:
     def __init__(self, path):
         self.select_video = Select_video(path)
-def sssd(path):
+def select_video_window(path):
     ui = UI(path)
     root = tk.Tk()
+
     root.title("Проводник по папке профиля")
 
     root.selected = None
+
+    def on_closing():
+        root.destroy()
+        root.selected = None
+
+    root.protocol("WM_DELETE_WINDOW", on_closing)
 
     btns_field = []
     btns_frame = tk.Frame(root)
@@ -27,7 +34,7 @@ def sssd(path):
     def on_select(video_name):
         full_path = os.path.join(path, video_name)
         root.selected = full_path
-        root.quit()
+        root.destroy()
 
 
     def reset():
@@ -62,12 +69,6 @@ def sssd(path):
 
 
     reset()
-    root.update()
-    while root.selected is None:
-        root.update()  # Обновляем Tkinter
-        pygame.event.pump()  # Обновляем Pygame
-        root.after(10)  # Небольшая задержка
-
-    root.destroy()
+    root.mainloop()
     return root.selected
 
