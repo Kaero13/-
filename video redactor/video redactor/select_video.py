@@ -36,6 +36,12 @@ def select_video_window(path):
         root.selected = full_path
         root.destroy()
 
+    def text_min(text):
+        if len(text) > 12:
+            resoult_text = text[:4] + "..." + text[-6:]
+        else:
+            resoult_text = text
+        return resoult_text
 
     def reset():
         for col in btns_field:
@@ -56,12 +62,12 @@ def select_video_window(path):
                 if btn_index < colwo:
                     video_name = files[btn_index]
                     btn_new = tk.Button(column_frame,
-                                        text=video_name,
-                                        width=2,
-                                        height=1,
+                                        text=text_min(video_name),
+                                        width=4,
+                                        height=3,
                                         command=lambda v=video_name: on_select(v)
                                         )
-                    btn_new.pack(ipadx=30, padx=5, pady=5)
+                    btn_new.pack(ipadx=30, padx=7, pady=5)
                     btns_column.append(btn_new)
 
             column_frame.pack(side="left")
