@@ -193,7 +193,7 @@ while rab:
                 if selected_file and selected_file != "":
                     # Получаем абсолютный путь к выбранному файлу и папке videos
                     abs_selected = os.path.abspath(selected_file)
-                    abs_videos_dir = os.path.abspath("videos")
+                    abs_videos_dir = os.path.abspath(main_path)
 
                     # Проверяем нахождение в папке videos
                     if os.path.commonpath([abs_selected, abs_videos_dir]) == abs_videos_dir:
@@ -333,4 +333,5 @@ while rab:
     screen.blit(load_button, load_button_rect)# Кнопка загрузки во внутреннию память
     screen.blit(select_button, select_button_rect)
     screen.blit(profile_button, profile_button_rect)
+
     pygame.display.flip()
