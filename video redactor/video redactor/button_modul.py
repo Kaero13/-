@@ -98,8 +98,14 @@ def download_complete_massage():
     messagebox.showinfo("Действие выполнено","Файл был успешно загружен")
     return None
 
-def profile_error_massage():
+def selected_error_massage():
     root = tk.Tk()
     root.withdraw()
-    messagebox.showerror("Ошибка","Профиль уже существует")
+    messagebox.showerror("Ошибка", "Войдите в профилень, чтобы выбирать видео")
+    return None
 
+def download_no_profile_error_massage():
+    root = tk.Tk()
+    root.withdraw()
+    messagebox.showerror("Ошибка", "Войдите в профилень, чтобы загружать видео")
+    return None

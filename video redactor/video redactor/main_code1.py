@@ -1,15 +1,10 @@
-from pathlib import Path
 import pygame
 import cv2
 import numpy as np
-from imageio.plugins.ffmpeg import download
 from moviepy import VideoFileClip
 from button_modul import *
 import os
 import shutil
-import tkinter as tk
-from tkinter import filedialog
-import atexit
 from profile_seletc_window import*
 from select_video import select_video_window
 
@@ -156,19 +151,24 @@ while rab:
 
             #Загрузка во внутреннюю память
             elif load_button_rect.collidepoint(pygame.mouse.get_pos()):
-                dowloand_file = dowload_video_file()
-                if dowloand_file and dowloand_file != "":
-                    shutil.move(dowloand_file, main_path)
-                    a = download_complete_massage()
+                if main_path == None:
+                    a = download_no_profile_error_massage()
                     if a == None:
                         pygame.display.flip()
-
-                elif dowloand_file == "":
-                    pass
                 else:
-                    a_er = download_error_massage()
-                    if a_er == None:
-                        pygame.display.flip()
+                    dowloand_file = dowload_video_file()
+                    if dowloand_file and dowloand_file != "":
+                        shutil.move(dowloand_file, main_path)
+                        a = download_complete_massage()
+                        if a == None:
+                            pygame.display.flip()
+
+                    elif dowloand_file == "":
+                        pass
+                    else:
+                        a_er = download_error_massage()
+                        if a_er == None:
+                            pygame.display.flip()
 
             elif profile_button_rect.collidepoint(pygame.mouse.get_pos()):
                 # global main_path
@@ -185,26 +185,31 @@ while rab:
 
             #Выбор из внутренней памяти
             elif select_button_rect.collidepoint(pygame.mouse.get_pos()):
-                selected_file = select_video_window(main_path)
-
-                if selected_file is None:
-                    pygame.display.flip()
-
-                if selected_file and selected_file != "":
-                    # Получаем абсолютный путь к выбранному файлу и папке videos
-                    abs_selected = os.path.abspath(selected_file)
-                    abs_videos_dir = os.path.abspath(main_path)
-
-                    # Проверяем нахождение в папке videos
-                    if os.path.commonpath([abs_selected, abs_videos_dir]) == abs_videos_dir:
-                        video_sel(selected_file, video_area_width, video_area_height)
-                        b = select_complete_massage()
-                        if b == None:
-                            pygame.display.flip()
-                    else:
-                        select_error_massage()
+                if main_path == None:
+                    a = selected_error_massage()
+                    if a == None:
+                        pygame.display.flip()
                 else:
-                    pass
+                    selected_file = select_video_window(main_path)
+
+                    if selected_file is None:
+                        pygame.display.flip()
+
+                    if selected_file and selected_file != "":
+                        # Получаем абсолютный путь к выбранному файлу и папке videos
+                        abs_selected = os.path.abspath(selected_file)
+                        abs_videos_dir = os.path.abspath(main_path)
+
+                        # Проверяем нахождение в папке videos
+                        if os.path.commonpath([abs_selected, abs_videos_dir]) == abs_videos_dir:
+                            video_sel(selected_file, video_area_width, video_area_height)
+                            b = select_complete_massage()
+                            if b == None:
+                                pygame.display.flip()
+                        else:
+                            select_error_massage()
+                    else:
+                        pass
 
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
@@ -333,5 +338,4 @@ while rab:
     screen.blit(load_button, load_button_rect)# Кнопка загрузки во внутреннию память
     screen.blit(select_button, select_button_rect)
     screen.blit(profile_button, profile_button_rect)
-
     pygame.display.flip()
