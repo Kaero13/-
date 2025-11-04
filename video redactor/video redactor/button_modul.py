@@ -103,14 +103,3 @@ def profile_error_massage():
     root.withdraw()
     messagebox.showerror("Ошибка","Профиль уже существует")
 
-
-def pol_error_massage():
-     root = tk.Tk()
-     root.withdraw()
-     messagebox.showerror("Ошибка","Заполните поля: Имя пользователя, Пароль, Путь к папке")
-
-
-def profile_complete_massage():
-     root = tk.Tk()
-     root.withdraw()
-     messagebox.showinfo("Действие выполнено", "Профиль успешно добавлен")
