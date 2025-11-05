@@ -1,3 +1,4 @@
+from dataclasses import replace
 from pathlib import Path
 import pygame
 
@@ -41,28 +42,56 @@ def dowload_video_file():
     return file_path
 
 
-def project_Folders():
-    folders = [
-        'videos',           # для видеофайлов
-        'audio',            # для аудиофайлов
-        'exports',          # для экспортированных файлов
-        'temp',             # для временных файлов
-    ]
-    for folder in folders:
-        folder_path = Path(folder)
-        if folder_path.exists():
-            pass
-        else:
-            folder_path.mkdir(exist_ok=True)
+import os
+from pathlib import Path
 
-    folder_path = 'temp'
-    if os.path.exists(folder_path):
-        for file in os.listdir(folder_path):
-            file_path = os.path.join(folder_path, file)
+def get_path():
+    Py_code_dir = Path(__file__).parent
+    Py_code_dir = str(Py_code_dir)
+    if "Py_code" in Py_code_dir:
+        Py_code_dir = Py_code_dir.replace("Py_code", "")
+    directorys = [
+        os.path.join(Py_code_dir,"Texture"),
+        os.path.join(Py_code_dir, "audio"),
+        os.path.join(Py_code_dir, "videos"),
+        os.path.join(Py_code_dir, "Profile_data"),
+        os.path.join(Py_code_dir, "temp")
+    ]
+    return directorys
+
+def in_user_folder(path_user_folder):
+    project_root = path_user_folder
+
+    folders = [
+        'videos',  # для итоговых видеофайлов
+        'audio',  # для аудиофайлов
+    ]
+
+    # Создаем папки в родительской директории
+    for folder in folders:
+        folder_path = project_root / folder
+        folder_path.mkdir(exist_ok=True)
+
+
+def project_Folders():
+    script_dir = Path(__file__).parent
+
+    # Поднимаемся на уровень выше (родительская директория)
+    project_root = script_dir.parent
+
+    # Создаем папку в родительской директории
+
+    folder_path = project_root / "temp"
+    folder_path.mkdir(exist_ok=True)
+
+    # Очистка папки temp
+    temp_path = project_root / 'temp'
+    if temp_path.exists():
+        for file in temp_path.iterdir():
+            file_path = temp_path / file
             try:
-                if os.path.isfile(file_path):
-                    os.remove(file_path)
-                    print(f"Удален при запуске: {file_path}")
+                if file_path.is_file():
+                    file_path.unlink()
             except Exception as e:
                 print(f"Ошибка удаления при запуске {file_path}: {e}")
 

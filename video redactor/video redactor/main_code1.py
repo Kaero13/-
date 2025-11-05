@@ -9,11 +9,13 @@ from profile_seletc_window import*
 from select_video import select_video_window
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
-project_Folders()       #создание папок приложения
+project_Folders()       #создание папки для временных файлов
 pygame.init()           #инцилизация pygame
 pygame.mixer.init()     #инцилизация микшера
 
-
+path = get_path()
+Texture_path = path[0]
+Temp_path = path[4]
 #Экран
 x = 1200
 y = 800
@@ -31,23 +33,23 @@ video_area_width = rect_rect.width - 40
 video_area_height = rect_rect.height - 40
 
 #Кнопка Выбора видео из внутренней памяти
-select_button = pygame.image.load("Texture/select_button.png")
+select_button = pygame.image.load(os.path.join(Texture_path,"select_button.png"))
 select_button_rect = select_button.get_rect()
 select_button_rect.right = x - 375
 select_button_rect.centery = y // 2 + 335
 
 #Кнопка старт/стоп/пауза
-button = pygame.image.load('Texture/start_button.png')
+button = pygame.image.load(os.path.join(Texture_path,'start_button.png'))
 button_rect = button.get_rect(center=(x // 2, y // 2 + 330))
 
 #Кнопка загрузки видео во внутрению память
-load_button = pygame.image.load('Texture/load_button.png')
+load_button = pygame.image.load(os.path.join(Texture_path,'load_button.png'))
 load_button_rect = load_button.get_rect()
 load_button_rect.right = x - 700
 load_button_rect.centery = y // 2 + 330
 
 #Кнопка загрузки видео во внутрению память
-profile_button = pygame.image.load('Texture/select_and_registr_profile.png')
+profile_button = pygame.image.load(os.path.join(Texture_path,'select_and_registr_profile.png'))
 profile_button_rect = load_button.get_rect()
 profile_button_rect.right = x - 80
 profile_button_rect.centery = y - 70
@@ -55,7 +57,7 @@ profile_button = pygame.transform.scale(profile_button, (128,128))
 
 #Создание окна pygame
 screen = pygame.display.set_mode((x, y))
-screen_fon = pygame.image.load('Texture/fon.jpg')
+screen_fon = pygame.image.load(os.path.join(Texture_path,'fon.jpg'))
 screen_fon = pygame.transform.scale(screen_fon, (x, y))
 
 
@@ -92,19 +94,19 @@ def video_sel(capt, video_area_width, video_area_height):
     clock = pygame.time.Clock()
     name_ras = os.path.basename(capt)
     name = os.path.splitext(name_ras)[0]
-    if not os.path.exists("temp/" + name + ".mp3"):
+    if not os.path.exists(os.path.join(Temp_path,(name + ".mp3"))):
         video = VideoFileClip(capt)
         audio = video.audio
         audio.write_audiofile(name + '.mp3')
-        shutil.move(name + '.mp3', 'temp/' + name + '.mp3')
+        shutil.move(name + '.mp3', os.path.join(Temp_path,(name + ".mp3")))
 
-    pygame.mixer.music.load('temp/' + name + '.mp3')
+    pygame.mixer.music.load(os.path.join(Temp_path,(name + '.mp3')))
     audio_start = False
     flip_mode = 0
     paused_frame = None
 
 #Предзагрузка Статичного видео при входе в приложение
-cap = cv2.VideoCapture('Texture/WelcomVideo/vidio.mp4')
+cap = cv2.VideoCapture(os.path.join(Texture_path,'WelcomVideo/vidio.mp4'))
 original_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 original_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 video_x, video_y, video_width, video_height = video_position_and_scale(
@@ -112,7 +114,7 @@ video_x, video_y, video_width, video_height = video_position_and_scale(
 
 video_fps = cap.get(cv2.CAP_PROP_FPS)
 clock = pygame.time.Clock()
-pygame.mixer.music.load('Texture/WelcomVideo/vidio.wav')
+pygame.mixer.music.load(os.path.join(Texture_path,'WelcomVideo/vidio.wav'))
 
 
 

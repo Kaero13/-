@@ -1,13 +1,13 @@
 import tkinter as tk
 import os
-import pygame
+
 
 class Select_video:
     def __init__(self, path):
         self.path = path
         data = os.listdir(path)
         colwo = len(data)
-        self.width = min(4, (colwo + 1)//2)
+        self.width = min(4, max(1, (colwo + 1)//2))
         self.height = (colwo + self.width - 1)//self.width
 
 class UI:
@@ -35,6 +35,14 @@ def select_video_window(path):
         full_path = os.path.join(path, video_name)
         root.selected = full_path
         root.destroy()
+    def on_select_folder(folder_name):
+        folder_path = os.path.join(path, folder_name)
+
+        new_selection = select_video_window(folder_path)
+
+        if new_selection is not None:
+            root.selected = new_selection
+            root.destroy()
 
     def text_min(text):
         if len(text) > 12:
@@ -61,14 +69,24 @@ def select_video_window(path):
                 btn_index = row_id*ui.select_video.width + col_id
                 if btn_index < colwo:
                     video_name = files[btn_index]
-                    btn_new = tk.Button(column_frame,
-                                        text=text_min(video_name),
-                                        width=4,
-                                        height=3,
-                                        command=lambda v=video_name: on_select(v)
-                                        )
-                    btn_new.pack(ipadx=30, padx=7, pady=5)
-                    btns_column.append(btn_new)
+                    if os.path.isdir(os.path.join(ui.select_video.path, video_name)) and video_name != "audio":
+                        btn_new = tk.Button(column_frame,
+                                            text=text_min(video_name),
+                                            width=4,
+                                            height=3,
+                                            command=lambda v=video_name: on_select_folder(v)
+                                            )
+                        btn_new.pack(ipadx=30, padx=7, pady=5)
+                        btns_column.append(btn_new)
+                    if not os.path.isdir(os.path.join(ui.select_video.path, video_name)):
+                        btn_new = tk.Button(column_frame,
+                                            text=text_min(video_name),
+                                            width=4,
+                                            height=3,
+                                            command=lambda v=video_name: on_select(v)
+                                            )
+                        btn_new.pack(ipadx=30, padx=7, pady=5)
+                        btns_column.append(btn_new)
 
             column_frame.pack(side="left")
             btns_column.append(column_frame)

@@ -18,14 +18,15 @@ def fix_path(path):
         return path
 
 def add_and_create_profile_to_json(Nik, Password, path, json_path, json_name = 'Profile_Data.json'):
-    full_output_path = os.path.join(fix_path(json_path), fix_path(json_name))
+    print(json_path)
+    full_output_path = fix_path(json_path) + "\\" + json_name
 
     parent_dir = os.path.dirname(full_output_path)
     if parent_dir:
         os.makedirs(parent_dir, exist_ok=True)
 
     profile_dict = {}
-    if len(Nik)>1 and len(str(Pass))>1:
+    if len(Nik)>1 and len(str(Password))>1:
         complete = True
         profile_dict[Nik] = {"Password" : fix_path(Password), "Video_path" : fix_path(path)}
     else:
@@ -40,13 +41,14 @@ def add_and_create_profile_to_json(Nik, Password, path, json_path, json_name = '
         with open(full_output_path, 'r+', encoding="utf-8") as f:
             try:
                 existing_dict = json.load(f)
-                if Nik in existing_dict:
-                    button_modul.profile_error_massage()
 
                 combined_data = existing_dict | profile_dict
                 f.seek(0)
                 json.dump(combined_data, f, ensure_ascii=False, indent=2)
             except json.JSONDecodeError:
                 json.dump(profile_dict, f, ensure_ascii=False, indent=2)
-
+    if complete:
+        return True
+    else:
+        return False
 

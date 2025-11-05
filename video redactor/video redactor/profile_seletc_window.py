@@ -1,11 +1,14 @@
-import pygame
+import os.path
+from pathlib import Path
+import button_modul
 import tkinter as tk
 import json
 
-
+path = button_modul.get_path()
+Profile_path = path[3]
 
 from profile import add_and_create_profile_to_json
-json_path = r"C:\Users\Acer\PycharmProjects\PythonProject\video redactor\Profile_data"
+json_path = Profile_path
 def select_window():
     """Окно с выбором папки и дополнительным полем ввода"""
     root = tk.Tk()
@@ -54,9 +57,26 @@ def select_window():
         else:
             return "Файл профиля не существует\n или не правильный пароль/ник.\n Для начала работы\n создайте новый профиль."
 
+    def fix_path(path):
+        if path is None:
+            return None
+        elif path.startswith('"') and path.endswith('"'):
+            path = path[1:-1]
+        if "\\" in path:
+            path = path.replace("\\", "/")
+
+        try:
+            return os.path.normpath(path)
+        except:
+            return path
+
     def registr():
         global messages_lable_pole
         a = add_and_create_profile_to_json(Nick.get(), Password.get(), folder_pol.get(), json_path)
+
+        folder_path = Path(fix_path(folder_pol.get()))
+        folder_path.mkdir(exist_ok=True)
+        button_modul.in_user_folder(folder_path)
 
         if 'messages_lable_pole' in globals():
             messages_lable_pole.destroy()
@@ -83,7 +103,7 @@ def select_window():
         b = Password.get()
         c = True
         try:
-            with open(r"C:\Users\Acer\PycharmProjects\PythonProject\video redactor\Profile_data\Profile_Data.json", "r", encoding="utf-8") as f:
+            with open(os.path.join(Profile_path, "Profile_Data.json"), "r", encoding="utf-8") as f:
                 data = json.load(f)
             if a in data.keys():
                 if b == data[a]["Password"]:
