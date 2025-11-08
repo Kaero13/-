@@ -17,6 +17,14 @@ class Redactor:
         self.ui()
         self.root.mainloop()
 
+    def get_audio_file(self):
+        video = VideoFileClip(self.video_path)
+        audio = video.audio
+        audio_path = os.path.join(self.video_output_path, "audio")
+        audio.write_audiofile(os.path.join(audio_path, os.path.basename(self.video_path)[:-4] + ".mp3"))
+        print(audio_path)
+        video.close()
+
     def get_start_and_end_times(self):
         start = self.slider_start.get()
         end = self.duration_time - self.slider_end.get()
@@ -25,7 +33,8 @@ class Redactor:
     def creat_clip(self):
         start, end = self.get_start_and_end_times()
         video = VideoFileClip(self.video_path)
-        video_output = os.path.join(self.video_output_path, (self.video_name_val.get()+".mp4"))
+        video_path = os.path.join(self.video_output_path, "videos")
+        video_output = os.path.join(video_path, (self.video_name_val.get()+".mp4"))
 
         new_video = video.subclipped(start, end)
         new_video.write_videofile(video_output, codec='libx264', audio_codec='aac')
@@ -59,12 +68,21 @@ class Redactor:
         self.slider_end = ttk.Scale(time_frame, from_=self.duration_time, to=0, orient="horizontal")
         self.slider_end.grid(row=1, column=2)
 
+        video_name_lable = ttk.Label(time_frame, text="Название")
+        video_name_lable.grid(row=0, column=0)
+
         self.video_name_val = tk.StringVar()
         self.video_name = tk.Entry(time_frame, width=20, textvariable=self.video_name_val)
         self.video_name.grid(row=1, column=0)
 
-        button = tk.Button(time_frame, text="button", command=self.creat_clip)
+        sprawka_lable = ttk.Label(time_frame, text="в поле названия не нужно\n указывать расширение")
+        sprawka_lable.grid(row=0, column=5)
+
+        button = tk.Button(time_frame, text="Создать Клип", command=self.creat_clip)
         button.grid(row=1, column=4)
+
+        audio_button = tk.Button(time_frame, text="Выгрузить аудиодорожку", command=self.get_audio_file)
+        audio_button.grid(row=1, column=5)
 
         def on_slider_change(event):
             start_val = self.slider_start.get()
@@ -110,4 +128,4 @@ class Redactor:
             img_lable.pack(padx=5, pady=5)
 
 
-Redactor(r"C:\Users\Acer\Kaero_video\WhatsApp Video 2025-11-03 at 12.46.18.mp4", r"C:\Users\Acer\Videos\Captures")
+Redactor(r"C:\Users\Acer\Kaero_video\WhatsApp Video 2025-11-03 at 12.46.18.mp4", r"C:\Users\Acer\Kaero_video")
