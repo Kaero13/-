@@ -6,6 +6,7 @@ from PIL import Image, ImageTk
 from mutagen.mp4 import MP4
 from moviepy import VideoFileClip
 
+
 class Redactor:
     def __init__(self, video_path, video_output_path):
         self.video_path = video_path
