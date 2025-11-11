@@ -1,12 +1,15 @@
 import pygame
 import cv2
 import numpy as np
-from moviepy import VideoFileClip
+import subprocess
+import sys
+
 from button_modul import *
 import os
 import shutil
 from profile_seletc_window import*
 from select_video import select_video_window
+from redactor_window import *
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 project_Folders()       #создание папки для временных файлов
@@ -48,7 +51,7 @@ load_button_rect = load_button.get_rect()
 load_button_rect.right = x - 700
 load_button_rect.centery = y // 2 + 330
 
-#Кнопка загрузки видео во внутрению память
+#Кнопка входа и регистрации профиля
 profile_button = pygame.image.load(os.path.join(Texture_path,'select_and_registr_profile.png'))
 profile_button_rect = load_button.get_rect()
 profile_button_rect.right = x - 80
@@ -60,6 +63,11 @@ screen = pygame.display.set_mode((x, y))
 screen_fon = pygame.image.load(os.path.join(Texture_path,'fon.jpg'))
 screen_fon = pygame.transform.scale(screen_fon, (x, y))
 
+#Кнопка открытия окна редактора выбранного видео в основном окне
+redactor_button = pygame.image.load(os.path.join(Texture_path, "redactor_button.png"))
+redactor_button_rect = redactor_button.get_rect()
+redactor_button_rect.right = x - 900
+redactor_button_rect.centery = y - 70
 
 def video_position_and_scale(frame_width, frame_height, area_width, area_height):
     video_ratio = frame_width / frame_height
@@ -129,6 +137,7 @@ ret = False
 frame = None
 paused_frame = None
 main_path = None
+selected_file = None
 
 #Тело программы
 while rab:
@@ -184,7 +193,6 @@ while rab:
                     if dubl is None:
                         pygame.display.flip()
 
-
             #Выбор из внутренней памяти
             elif select_button_rect.collidepoint(pygame.mouse.get_pos()):
                 if main_path == None:
@@ -213,6 +221,17 @@ while rab:
                     else:
                         pass
 
+            elif redactor_button_rect.collidepoint(pygame.mouse.get_pos()):
+                try:
+                    subprocess.Popen([
+                        sys.executable,
+                        "redactor_window.py",
+                        selected_file,
+                        main_path,
+                    ])
+
+                except NameError as e:
+                    print(False)
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             mousedown = not mousedown
@@ -336,6 +355,7 @@ while rab:
         screen.blit(frame_surface, (video_x, video_y))
 
     #Отрисовка Кнопак
+    screen.blit(redactor_button, redactor_button_rect)
     screen.blit(button, button_rect) #Кнопка старт/стоп/пауза
     screen.blit(load_button, load_button_rect)# Кнопка загрузки во внутреннию память
     screen.blit(select_button, select_button_rect)

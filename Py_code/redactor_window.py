@@ -1,21 +1,80 @@
+from select_video import *
 import os
 import tkinter as tk
 from tkinter import ttk
-import cv2
-from PIL import Image, ImageTk
 from mutagen.mp4 import MP4
-from moviepy import VideoFileClip
-
+from moviepy import VideoFileClip, concatenate_videoclips
+import threading
 
 class Redactor:
     def __init__(self, video_path, video_output_path):
         self.video_path = video_path
+        self.path = None
         self.video_output_path = video_output_path
         self.duration_time = self.get_video_duration(video_path) or 100.0
         self.root = tk.Tk()
         self.root.title("Video Redactor")
         self.ui()
         self.root.mainloop()
+
+    def select_first_video(self):
+        thread = threading.Thread(target=self.select_video_file_first)
+        thread.daemon = True
+        thread.start()
+
+    def select_video_file_first(self):
+        try:
+            file_path = select_video_window(self.video_output_path)
+            if file_path:
+                self.path = file_path
+            self.root.after(0, lambda: self.name_first_video.set(file_path))
+        finally:
+            print(self.path)
+
+    def select_second_video(self):
+        thread = threading.Thread(target=self.select_video_file_second)
+        thread.daemon = True
+        thread.start()
+
+    def select_video_file_second(self):
+        try:
+            file_path = select_video_window(self.video_output_path)
+            if file_path:
+                self.path = file_path
+            self.root.after(0, lambda: self.name_second_video.set(file_path))
+        finally:
+            print(self.path)
+
+    def glue_video_thread(self):
+        self.button_glue.config(state="disabled")
+        self.button_glue.config(text="Склеивание...")
+
+        # Запуск в отдельном потоке
+        thread = threading.Thread(target=self.glue_video)
+        thread.daemon = True
+        thread.start()
+
+    def glue_video(self):
+        try:
+            clip_one = VideoFileClip(self.first_pol_video.get())
+            clip_two = VideoFileClip(self.second_pol_video.get())
+
+            final_video = concatenate_videoclips([clip_one, clip_two], method="compose")
+
+            write = os.path.join(self.video_output_path, "videos")
+            output_path = os.path.join(write, (self.video_name_val.get() + ".mp4"))
+            final_video.write_videofile(output_path, codec='libx264', audio_codec='aac')
+
+            clip_one.close()
+            clip_two.close()
+            final_video.close()
+
+        finally:
+            self.root.after(0, self.enable_glue_button)
+
+    def enable_glue_button(self):
+        self.button_glue.config(state="normal")
+        self.button_glue.config(text="Склеить видео")
 
     def get_audio_file(self):
         video = VideoFileClip(self.video_path)
@@ -50,8 +109,26 @@ class Redactor:
             return None
 
     def ui(self):
-        main_frame = ttk.Frame(self.root)
-        main_frame.pack(padx=5, pady=5)
+        glue_frame = ttk.Frame(self.root)
+        glue_frame.pack(padx=5,pady=10)
+
+        self.name_first_video = tk.StringVar()
+        self.name_second_video = tk.StringVar()
+
+        self.first_select = tk.Button(glue_frame, text="...", command=lambda:self.select_first_video())
+        self.first_select.grid(row=0, column=1)
+
+        self.first_pol_video = tk.Entry(glue_frame, textvariable=self.name_first_video)
+        self.first_pol_video.grid(row=0, column=0)
+
+        self.second_pol_video = tk.Entry(glue_frame, textvariable=self.name_second_video)
+        self.second_pol_video.grid(row=0, column=4)
+
+        self.second_select = tk.Button(glue_frame, text="...", command=lambda:self.select_second_video())
+        self.second_select.grid(row=0, column=3)
+
+        self.button_glue = tk.Button(glue_frame, text="Склеить", command=self.glue_video_thread, bg="lightblue")
+        self.button_glue.grid(row=0, column=2, )
 
         time_frame = ttk.Frame(self.root)
         time_frame.pack(padx=5, pady=5)
@@ -75,7 +152,7 @@ class Redactor:
         self.video_name = tk.Entry(time_frame, width=20, textvariable=self.video_name_val)
         self.video_name.grid(row=1, column=0)
 
-        sprawka_lable = ttk.Label(time_frame, text="в поле названия не нужно\n указывать расширение")
+        sprawka_lable = ttk.Label(time_frame, text="в поле названия не нужно\n указывать расширение,\n также это поле название\n склеенных видео")
         sprawka_lable.grid(row=0, column=5)
 
         button = tk.Button(time_frame, text="Создать Клип", command=self.creat_clip)
@@ -109,23 +186,11 @@ class Redactor:
         self.slider_start.bind("<Motion>", on_slider_change)
         self.slider_end.bind("<Motion>", on_slider_change)
 
-        def preview_video(video_path):
-            cap = cv2.VideoCapture(video_path)
-            ret, frame = cap.read()
-            cap.release()
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) == 3:
+        video_path = sys.argv[1]
+        output_path = sys.argv[2]
+        Redactor(video_path, output_path)
 
-            if ret:
-                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                pil_image = Image.fromarray(frame_rgb)
-                pil_image = ImageTk.PhotoImage(pil_image)
-                return pil_image
-            return None
-
-        img = preview_video(self.video_path)
-        if img:
-            img_lable = ttk.Label(main_frame, image=img)
-            img_lable.image = img
-            img_lable.pack(padx=5, pady=5)
-
-
-Redactor(r"C:\Users\Acer\Kaero_video\WhatsApp Video 2025-11-03 at 12.46.18.mp4", r"C:\Users\Acer\Kaero_video")
+# Redactor(r"C:\Users\Acer\Kaero_video\WhatsApp Video 2025-11-03 at 12.46.18.mp4", r"C:\Users\Acer\Kaero_video")
