@@ -5,6 +5,7 @@ from tkinter import ttk
 from mutagen.mp4 import MP4
 from moviepy import VideoFileClip, concatenate_videoclips
 import threading
+import json
 
 class Redactor:
     def __init__(self, video_path, video_output_path):
@@ -13,9 +14,23 @@ class Redactor:
         self.video_output_path = video_output_path
         self.duration_time = self.get_video_duration(video_path) or 100.0
         self.root = tk.Tk()
+        self.dubl()
         self.root.title("Video Redactor")
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.ui()
         self.root.mainloop()
+
+    def dubl(self):
+        with open('dubl.json', 'w', encoding='utf-8') as f:
+            dubl = [False]
+            json.dump(dubl, f)
+
+    def on_closing(self):
+        with open('dubl.json', 'w', encoding='utf-8') as f:
+            dubl = [True]
+            json.dump(dubl, f)
+        self.root.destroy()
+
 
     def select_first_video(self):
         thread = threading.Thread(target=self.select_video_file_first)
@@ -81,7 +96,6 @@ class Redactor:
         audio = video.audio
         audio_path = os.path.join(self.video_output_path, "audio")
         audio.write_audiofile(os.path.join(audio_path, os.path.basename(self.video_path)[:-4] + ".mp3"))
-        print(audio_path)
         video.close()
 
     def get_start_and_end_times(self):

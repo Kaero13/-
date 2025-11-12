@@ -131,6 +131,13 @@ fullscreen = False
 mousedown = False
 audio_start = False
 rab = True
+dubl_red = None
+if dubl_red == None:
+    with open('dubl.json', "w", encoding='utf-8') as f:
+       json.dump(["True"], f)
+
+    with open('dubl.json', "r", encoding='utf-8') as f:
+       dubl_red = json.load(f)
 
 # Инициализация переменных для воспроизведения видео
 ret = False
@@ -222,16 +229,20 @@ while rab:
                         pass
 
             elif redactor_button_rect.collidepoint(pygame.mouse.get_pos()):
-                try:
+
+                with open('dubl.json', "r", encoding='utf-8') as f:
+                    dubl_red = json.load(f)
+
+                print(dubl_red[0])
+                if dubl_red[0]:
                     subprocess.Popen([
                         sys.executable,
                         "redactor_window.py",
                         selected_file,
                         main_path,
                     ])
-
-                except NameError as e:
-                    print(False)
+                else:
+                    print(13)
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             mousedown = not mousedown
