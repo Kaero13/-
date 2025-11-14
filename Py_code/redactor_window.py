@@ -3,6 +3,7 @@ import os
 import tkinter as tk
 from tkinter import ttk
 from mutagen.mp4 import MP4
+import pymediainfo as mt
 from moviepy import VideoFileClip, concatenate_videoclips
 import threading
 import json
@@ -12,7 +13,19 @@ class Redactor:
         self.video_path = video_path
         self.path = None
         self.video_output_path = video_output_path
-        self.duration_time = self.get_video_duration(video_path) or 100.0
+        if os.path.splitext(video_path)[1] == '.MP4':
+            pass
+        elif os.path.splitext(video_path)[1] == '.AVI':
+            pass
+        elif os.path.splitext(video_path)[1] == '.MOV':
+
+            for i in mt.MediaInfo.parse(video_path).tracks:
+                self.duration_time = i.duration/1000 or 100.0
+                break
+        elif os.path.splitext(video_path)[1] == '.MKV':
+            pass
+        elif os.path.splitext(video_path)[1] == '.WMV':
+            pass
         self.root = tk.Tk()
         self.dubl()
         self.root.title("Video Redactor")
@@ -207,4 +220,4 @@ if __name__ == "__main__":
         output_path = sys.argv[2]
         Redactor(video_path, output_path)
 
-# Redactor(r"C:\Users\Acer\Kaero_video\WhatsApp Video 2025-11-03 at 12.46.18.mp4", r"C:\Users\Acer\Kaero_video")
+Redactor(r"D:\-\Kaero_videos\IMG_0419.MOV", r"D:\-\Kaero_videos")
