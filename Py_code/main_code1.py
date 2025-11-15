@@ -233,7 +233,6 @@ while rab:
                 with open('dubl.json', "r", encoding='utf-8') as f:
                     dubl_red = json.load(f)
 
-                print(dubl_red[0])
                 if dubl_red[0]:
                     subprocess.Popen([
                         sys.executable,

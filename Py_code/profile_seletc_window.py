@@ -26,6 +26,8 @@ def select_window():
     Nick = tk.StringVar()
     Password = tk.StringVar()
     Folder = tk.StringVar()
+    sing_Nick = tk.StringVar()
+    sing_Password = tk.StringVar()
 
     Nick_lable = tk.Label(input_frame, text = "Имя пользователя:")
     Nick_lable.grid(row = 0, column = 1,sticky=tk.W)
@@ -36,6 +38,12 @@ def select_window():
     pasword_lable.grid(row=1, column=1,sticky=tk.W)
     pasword_pol = tk.Entry(input_frame, width=30, textvariable=Password)
     pasword_pol.grid(row=1, column=2, padx=5, pady=5)
+
+    sing_Nick_lable = tk.Label(input_frame, text="Имя пользователя:")
+    sing_Nick_pol = tk.Entry(input_frame, width=30, textvariable=sing_Nick)
+
+    sing_pasword_lable = tk.Label(input_frame, text="Пароль:")
+    sing_pasword_pol = tk.Entry(input_frame, width=30, textvariable=sing_Password)
 
     folder_path_lable = tk.Label(input_frame, text="Путь к папке пользователя:")
     folder_path_lable.grid(row=2, column=1,sticky=tk.W)
@@ -89,6 +97,11 @@ def select_window():
         folder_pol.grid_forget()
         folder_path_lable.grid_forget()
         sing_window_button.grid_forget()
+        sing_Nick_pol.grid(row=0, column=2, padx=5, pady=5)
+        sing_pasword_lable.grid(row=1, column=1, sticky=tk.W)
+        sing_pasword_pol.grid(row=1, column=2, padx=5, pady=5)
+
+        sing_Nick_lable.grid(row=0, column=1, sticky=tk.W)
 
         sing_button = tk.Button(root, text="Войти", command=sing)
         sing_button.grid(row=1, column=1, padx=5, pady=5)
@@ -99,12 +112,15 @@ def select_window():
     def sing():
         global messages_lable_pole_sing
         path = None
-        a = Nick.get()
-        b = Password.get()
+        a = sing_Nick.get()
+        b = sing_Password.get()
         c = True
         try:
             with open(os.path.join(Profile_path, "Profile_Data.json"), "r", encoding="utf-8") as f:
                 data = json.load(f)
+
+            print(data)
+            print(a, b)
             if a in data.keys():
                 if b == data[a]["Password"]:
                     path = data[a]["Video_path"]
