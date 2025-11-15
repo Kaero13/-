@@ -148,6 +148,7 @@ class Profile:
                 messages_lable_pole_sing.grid(row=3, column=1, padx=5, pady=5)
 
 
+
         registr_button = tk.Button(root, text="Зарегистрировать", command=registr)
         registr_button.grid(row=3, column=2)
         sing_window_button = tk.Button(root, text="Окно входа",  command=window_sing)
