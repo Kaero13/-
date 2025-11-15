@@ -13,19 +13,7 @@ class Redactor:
         self.video_path = video_path
         self.path = None
         self.video_output_path = video_output_path
-        if os.path.splitext(video_path)[1] == '.MP4':
-            pass
-        elif os.path.splitext(video_path)[1] == '.AVI':
-            pass
-        elif os.path.splitext(video_path)[1] == '.MOV':
-
-            for i in mt.MediaInfo.parse(video_path).tracks:
-                self.duration_time = i.duration/1000 or 100.0
-                break
-        elif os.path.splitext(video_path)[1] == '.MKV':
-            pass
-        elif os.path.splitext(video_path)[1] == '.WMV':
-            pass
+        self.duration_time = self.get_video_duration(self.video_path) or 117.0
         self.root = tk.Tk()
         self.dubl()
         self.root.title("Video Redactor")
@@ -129,10 +117,13 @@ class Redactor:
 
     def get_video_duration(self, video_path):
         try:
-            video = MP4(video_path)
-            duration = video.info.length
-            return duration
-        except:
+            durate = None
+            for i in mt.MediaInfo.parse(video_path).tracks:
+                durate = i.duration / 1000
+                break
+            if durate is not None:
+                return durate
+        except Exception as e:
             return None
 
     def ui(self):
@@ -220,4 +211,4 @@ if __name__ == "__main__":
         output_path = sys.argv[2]
         Redactor(video_path, output_path)
 
-Redactor(r"D:\-\Kaero_videos\IMG_0419.MOV", r"D:\-\Kaero_videos")
+#Redactor(r"C:\Users\Acer\PycharmProjects\PythonProject\video redactor\video2\file_example_AVI_480_750kB.avi", r"D:\-\Kaero_videos")
