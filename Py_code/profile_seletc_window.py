@@ -30,6 +30,8 @@ class Profile:
             json.dump(a, f)
 
     def on_closing(self):
+        with open("profile_path_and_dubl.json", "w", encoding="utf-8") as f:
+            json.dump({}, f)
         self.prov = True
         self.root.selected_path = None
         self.root.destroy()
