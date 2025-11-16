@@ -132,6 +132,8 @@ mousedown = False
 audio_start = False
 rab = True
 dubl_red = None
+dubl_prof = str(True)
+
 if dubl_red == None:
     with open('dubl.json', "w", encoding='utf-8') as f:
        json.dump(["True"], f)
@@ -190,21 +192,19 @@ while rab:
 
             elif profile_button_rect.collidepoint(pygame.mouse.get_pos()):
                 # global main_path
-                # dubl = None
-                # if main_path == None:
-                #     main_path = select_window()
-                #     if main_path is None:
-                #         pygame.display.flip()
-                # else:
-                #     dubl = dubl_click()
-                #     if dubl is None:
-                #         pygame.display.flip()
+
 
                 subprocess.run([
                     sys.executable,
-                    "profile_seletc_window.py"
+                    "profile_seletc_window.py",
+                    dubl_prof
                 ])
-                # print(main_path)
+                with open("profile_path_and_dubl.json", "r", encoding='utf-8') as f:
+                    local_path = json.load(f)
+                if local_path != {}:
+                    dubl_prof = local_path["Second"]
+                    main_path = local_path["First"]
+                    # print(dubl_prof, main_path)
             #Выбор из внутренней памяти
             elif select_button_rect.collidepoint(pygame.mouse.get_pos()):
                 if main_path == None:
@@ -212,6 +212,7 @@ while rab:
                     if a == None:
                         pygame.display.flip()
                 else:
+                    # print(main_path)
                     selected_file = select_video_window(main_path)
 
                     if selected_file is None:
