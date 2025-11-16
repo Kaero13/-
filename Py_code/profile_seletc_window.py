@@ -6,7 +6,10 @@ import tkinter as tk
 import json
 
 class Profile:
-    def __init__(self):
+    def __init__(self, dubl):
+        self.dubl = dubl
+        if self.dubl is not None:
+            self.dubl_click()
         self.Profile_path = self.path()
         self.json_path = self.path()
         self.root = tk.Tk()
@@ -16,8 +19,13 @@ class Profile:
         self.select_window()
         self.root.mainloop()
 
-    def __str__(self):
+    def load(self):
         print(self.root.selected_path)
+        a = []
+        a.append(self.root.selected_path)
+        a.append(False)
+        with open("profile_path_and_dubl.json", "w", encoding="utf-8") as f:
+            json.dump(a, f, ensure_ascii=False, indent=2)
 
     def on_closing(self):
         self.root.selected_path = None
@@ -119,6 +127,7 @@ class Profile:
             self.messages_lable_pole_sing.grid(row=2, column=1, padx=5, pady=5)
 
         def sing():
+            path = None
             a = self.sing_Nick.get()
             b = self.sing_Password.get()
             c = True
@@ -132,6 +141,7 @@ class Profile:
                     if b == data[a]["Password"]:
                         path = data[a]["Video_path"]
                         self.root.selected_path = path
+                        self.load()
                         self.root.destroy()
                         return
 
@@ -165,25 +175,25 @@ class Profile:
         self.root.mainloop()
 
 
-    # def dubl_click(self):
-    #     root = tk.Tk()
-    #     root.exit = None
-    #     def OK_funct():
-    #         exit_command()
-    #         self.select_window()
-    #
-    #     def exit_command():
-    #         root.exit = None
-    #         root.destroy()
-    #     root.protocol("WM_DELETE_WINDOW", exit_command)
-    #     lable = tk.Label(text="Вы повторно нажали на выбор профиля\n если хотите сменить профиль, то нажмите ОК")
-    #     lable.grid(row = 0, column = 1)
-    #     OK_button = tk.Button(text="Ок", width=5, height=2, command=OK_funct)
-    #     OK_button.grid(row = 2, column = 1)
-    #     Exit_button = tk.Button(text="Выйти", width=5, height=2, command=exit_command)
-    #     Exit_button.grid(row = 1, column = 1,)
-    #
-    #     root.mainloop()
-    #     return root.exit
+    def dubl_click(self):
+        root = tk.Tk()
+        root.exit = None
+        def OK_funct():
+            exit_command()
+            self.select_window()
+
+        def exit_command():
+            root.exit = None
+            root.destroy()
+        root.protocol("WM_DELETE_WINDOW", exit_command)
+        lable = tk.Label(text="Вы повторно нажали на выбор профиля\n если хотите сменить профиль, то нажмите ОК")
+        lable.grid(row = 0, column = 1)
+        OK_button = tk.Button(text="Ок", width=5, height=2, command=OK_funct)
+        OK_button.grid(row = 2, column = 1)
+        Exit_button = tk.Button(text="Выйти", width=5, height=2, command=exit_command)
+        Exit_button.grid(row = 1, column = 1,)
+
+        root.mainloop()
+        return root.exit
 if __name__ == "__main__":
-    Profile().__str__()
+    Profile()
