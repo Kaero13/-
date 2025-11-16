@@ -7,27 +7,30 @@ import json
 
 class Profile:
     def __init__(self, dubl):
+        self.prov = None
         self.dubl = dubl
-        if self.dubl is not None:
+        if self.dubl != True:
+            self.prov = True
             self.dubl_click()
-        self.Profile_path = self.path()
-        self.json_path = self.path()
-        self.root = tk.Tk()
-        self.root.selected_path = None
-        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
-        self.root.eval('tk::PlaceWindow . center')
-        self.select_window()
-        self.root.mainloop()
+        if self.prov is None or self.prov == False:
+            self.Profile_path = self.path()
+            self.json_path = self.path()
+            self.root = tk.Tk()
+            self.root.selected_path = None
+            self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+            self.root.eval('tk::PlaceWindow . center')
+            self.select_window()
+            self.root.mainloop()
 
     def load(self):
-        print(self.root.selected_path)
-        a = []
-        a.append(self.root.selected_path)
-        a.append(False)
+        # print(self.root.selected_path)
+        a = {"First": self.root.selected_path, "Second" : False}
+
         with open("profile_path_and_dubl.json", "w", encoding="utf-8") as f:
-            json.dump(a, f, ensure_ascii=False, indent=2)
+            json.dump(a, f)
 
     def on_closing(self):
+        self.prov = True
         self.root.selected_path = None
         self.root.destroy()
 
@@ -135,8 +138,8 @@ class Profile:
                 with open(os.path.join(self.Profile_path, "Profile_Data.json"), "r", encoding="utf-8") as f:
                     data = json.load(f)
 
-                print(data)
-                print(a, b)
+                # print(data)
+                # print(a, b)
                 if a in data.keys():
                     if b == data[a]["Password"]:
                         path = data[a]["Video_path"]
@@ -177,13 +180,19 @@ class Profile:
 
     def dubl_click(self):
         root = tk.Tk()
-        root.exit = None
         def OK_funct():
             exit_command()
+            self.Profile_path = self.path()
+            self.json_path = self.Profile_path
+            self.root = tk.Tk()
+            self.root.selected_path = None
+            self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+            self.root.eval('tk::PlaceWindow . center')
+            self.prov = False
             self.select_window()
 
         def exit_command():
-            root.exit = None
+            self.prov = True
             root.destroy()
         root.protocol("WM_DELETE_WINDOW", exit_command)
         lable = tk.Label(text="Вы повторно нажали на выбор профиля\n если хотите сменить профиль, то нажмите ОК")
@@ -194,6 +203,11 @@ class Profile:
         Exit_button.grid(row = 1, column = 1,)
 
         root.mainloop()
-        return root.exit
+
 if __name__ == "__main__":
-    Profile()
+    import sys
+    if len(sys.argv) == 2:
+        dubl = sys.argv[1]
+        if dubl == str(True):
+            dubl = True
+        Profile(dubl)
