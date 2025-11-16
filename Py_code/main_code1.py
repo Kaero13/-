@@ -190,16 +190,21 @@ while rab:
 
             elif profile_button_rect.collidepoint(pygame.mouse.get_pos()):
                 # global main_path
-                dubl = None
-                if main_path == None:
-                    main_path = select_window()
-                    if main_path is None:
-                        pygame.display.flip()
-                else:
-                    dubl = dubl_click()
-                    if dubl is None:
-                        pygame.display.flip()
+                # dubl = None
+                # if main_path == None:
+                #     main_path = select_window()
+                #     if main_path is None:
+                #         pygame.display.flip()
+                # else:
+                #     dubl = dubl_click()
+                #     if dubl is None:
+                #         pygame.display.flip()
 
+                subprocess.run([
+                    sys.executable,
+                    "profile_seletc_window.py"
+                ])
+                # print(main_path)
             #Выбор из внутренней памяти
             elif select_button_rect.collidepoint(pygame.mouse.get_pos()):
                 if main_path == None:
