@@ -23,6 +23,7 @@ class Profile:
             self.root.mainloop()
 
     def load(self):
+
         # print(self.root.selected_path)
         a = {"First": self.root.selected_path, "Second" : False}
 

@@ -207,6 +207,7 @@ while rab:
                     # print(dubl_prof, main_path)
             #Выбор из внутренней памяти
             elif select_button_rect.collidepoint(pygame.mouse.get_pos()):
+
                 if main_path == None:
                     a = selected_error_massage()
                     if a == None:
