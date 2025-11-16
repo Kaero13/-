@@ -73,58 +73,54 @@ class Profile:
         self.messages_lable_pole = tk.Label(self.input_frame, text="")
         self.messages_lable_pole.grid(row=3, column=1, padx=5, pady=5)
 
+    def message(self,Bool):
+        if Bool == True:
+            return "Профиль успешно добавлен"
+        else:
+            return "Заполните поля ник, пароль, путь к папке профиля."
+
+    def sing_message(self, Bool):
+        if Bool == True:
+            return "Файл профиля не существует.\n Для начала работы\n создайте новый профиль."
+        else:
+            return "Файл профиля не существует\n или не правильный пароль/ник.\n Для начала работы\n создайте новый профиль."
+
     def select_window(self):
-        """Окно с выбором папки и дополнительным полем ввода"""
-
-
-        def message(Bool):
-            if Bool == True:
-                return "Профиль успешно добавлен"
-            else:
-                return "Заполните поля ник, пароль, путь к папке профиля."
-
-        def sing_message(Bool):
-            if Bool == True:
-                return "Файл профиля не существует.\n Для начала работы\n создайте новый профиль."
-            else:
-                return "Файл профиля не существует\n или не правильный пароль/ник.\n Для начала работы\n создайте новый профиль."
+        self.gui()
 
         def registr():
-            global messages_lable_pole
-            a = add_and_create_profile_to_json(Nick.get(), Password.get(), folder_pol.get(), self.json_path)
+            a = add_and_create_profile_to_json(self.Nick.get(), self.Password.get(), self.folder_pol.get(), self.json_path)
 
-            folder_path = Path(self.fix_path(folder_pol.get()))
+            folder_path = Path(self.fix_path(self.folder_pol.get()))
             folder_path.mkdir(exist_ok=True)
             button_modul.in_user_folder(folder_path)
 
             if 'messages_lable_pole' in globals():
-                messages_lable_pole.destroy()
+                self.messages_lable_pole.destroy()
 
-            messages_lable_pole = tk.Label(input_frame, text=message(a))
-            messages_lable_pole.grid(row=3, column = 1, padx = 5, pady = 5)
+            self.messages_lable_pole = tk.Label(self.input_frame, text=self.message(a))
+            self.messages_lable_pole.grid(row=3, column = 1, padx = 5, pady = 5)
 
         def window_sing():
-            registr_button.grid_forget()
-            folder_pol.grid_forget()
-            folder_path_lable.grid_forget()
-            sing_window_button.grid_forget()
-            sing_Nick_pol.grid(row=0, column=2, padx=5, pady=5)
-            sing_pasword_lable.grid(row=1, column=1, sticky=tk.W)
-            sing_pasword_pol.grid(row=1, column=2, padx=5, pady=5)
+            self.registr_button.grid_forget()
+            self.folder_pol.grid_forget()
+            self.folder_path_lable.grid_forget()
+            self.sing_window_button.grid_forget()
+            self.sing_Nick_pol.grid(row=0, column=2, padx=5, pady=5)
+            self.sing_pasword_lable.grid(row=1, column=1, sticky=tk.W)
+            self.sing_pasword_pol.grid(row=1, column=2, padx=5, pady=5)
 
-            sing_Nick_lable.grid(row=0, column=1, sticky=tk.W)
+            self.sing_Nick_lable.grid(row=0, column=1, sticky=tk.W)
 
-            sing_button = tk.Button(self.root, text="Войти", command=sing)
-            sing_button.grid(row=1, column=1, padx=5, pady=5)
+            self.sing_button = tk.Button(self.root, text="Войти", command=sing)
+            self.sing_button.grid(row=1, column=1, padx=5, pady=5)
 
-            messages_lable_pole_sing = tk.Label(input_frame, text="")
-            messages_lable_pole_sing.grid(row=2, column=1, padx=5, pady=5)
+            self.messages_lable_pole_sing = tk.Label(self.input_frame, text="")
+            self.messages_lable_pole_sing.grid(row=2, column=1, padx=5, pady=5)
 
         def sing():
-            global messages_lable_pole_sing
-            path = None
-            a = sing_Nick.get()
-            b = sing_Password.get()
+            a = self.sing_Nick.get()
+            b = self.sing_Password.get()
             c = True
             try:
                 with open(os.path.join(self.Profile_path, "Profile_Data.json"), "r", encoding="utf-8") as f:
@@ -137,27 +133,34 @@ class Profile:
                         path = data[a]["Video_path"]
                         self.root.selected_path = path
                         self.root.destroy()
+                        return
+
+                    c = False
+                    if c == False:
+                        self.messages_lable_pole_sing = tk.Label(self.input_frame, text=self.sing_message(c))
+                        self.messages_lable_pole_sing.grid(row=3, column=1, padx=5, pady=5)
+
                 elif a == "" or b == "":
                     c = False
                     if 'messages_lable_pole_sing' in globals():
-                        messages_lable_pole_sing.destroy()
+                        self.messages_lable_pole_sing.destroy()
 
-                    messages_lable_pole_sing = tk.Label(input_frame, text=sing_message(c))
-                    messages_lable_pole_sing.grid(row=3, column=1, padx=5, pady=5)
+                    self.messages_lable_pole_sing = tk.Label(self.input_frame, text=self.sing_message(c))
+                    self.messages_lable_pole_sing.grid(row=3, column=1, padx=5, pady=5)
 
-            except:
+            except NameError as e:
                 if 'messages_lable_pole_sing' in globals():
-                    messages_lable_pole_sing.destroy()
+                    self.messages_lable_pole_sing.destroy()
 
-                messages_lable_pole_sing = tk.Label(input_frame, text=sing_message(c))
-                messages_lable_pole_sing.grid(row=3, column=1, padx=5, pady=5)
+                self.messages_lable_pole_sing = tk.Label(self.input_frame, text=str(e))
+                self.messages_lable_pole_sing.grid(row=3, column=1, padx=5, pady=5)
 
 
 
-        registr_button = tk.Button(self.root, text="Зарегистрировать", command=registr)
-        registr_button.grid(row=3, column=2)
-        sing_window_button = tk.Button(self.root, text="Окно входа",  command=window_sing)
-        sing_window_button.grid(row=3, column=3)
+        self.registr_button = tk.Button(self.root, text="Зарегистрировать", command=registr)
+        self.registr_button.grid(row=3, column=2)
+        self.sing_window_button = tk.Button(self.root, text="Окно входа",  command=window_sing)
+        self.sing_window_button.grid(row=3, column=3)
 
         self.root.mainloop()
 
@@ -182,4 +185,5 @@ class Profile:
     #
     #     root.mainloop()
     #     return root.exit
-Profile().__str__()
+if __name__ == "__main__":
+    Profile().__str__()
