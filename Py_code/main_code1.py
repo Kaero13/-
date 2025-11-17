@@ -172,23 +172,26 @@ while rab:
             #Загрузка во внутреннюю память
             elif load_button_rect.collidepoint(pygame.mouse.get_pos()):
                 if main_path == None:
-                    a = download_no_profile_error_massage()
-                    if a == None:
-                        pygame.display.flip()
+                    # a = download_no_profile_error_massage()
+                    # if a == None:
+                    #     pygame.display.flip()
+                    print(False)
                 else:
                     dowloand_file = dowload_video_file()
                     if dowloand_file and dowloand_file != "":
                         shutil.move(dowloand_file, main_path)
-                        a = download_complete_massage()
-                        if a == None:
-                            pygame.display.flip()
+                        # a = download_complete_massage()
+                        # if a == None:
+                        #     pygame.display.flip()
+                        print(True)
 
                     elif dowloand_file == "":
                         pass
                     else:
-                        a_er = download_error_massage()
-                        if a_er == None:
-                            pygame.display.flip()
+                        # a_er = download_error_massage()
+                        # if a_er == None:
+                        #     pygame.display.flip()
+                        print(False)
 
             elif profile_button_rect.collidepoint(pygame.mouse.get_pos()):
                 # global main_path
@@ -202,16 +205,17 @@ while rab:
                 with open("profile_path_and_dubl.json", "r", encoding='utf-8') as f:
                     local_path = json.load(f)
                 if local_path != {}:
-                    dubl_prof = local_path["Second"]
+                    dubl_prof = str(local_path["Second"])
                     main_path = local_path["First"]
                     # print(dubl_prof, main_path)
             #Выбор из внутренней памяти
             elif select_button_rect.collidepoint(pygame.mouse.get_pos()):
 
                 if main_path == None:
-                    a = selected_error_massage()
-                    if a == None:
-                        pygame.display.flip()
+                    print(True)
+                    # a = selected_error_massage()
+                    # if a == None:
+                    #     pygame.display.flip()
                 else:
                     # print(main_path)
                     selected_file = select_video_window(main_path)
@@ -227,11 +231,13 @@ while rab:
                         # Проверяем нахождение в папке videos
                         if os.path.commonpath([abs_selected, abs_videos_dir]) == abs_videos_dir:
                             video_sel(selected_file, video_area_width, video_area_height)
-                            b = select_complete_massage()
-                            if b == None:
-                                pygame.display.flip()
+                            # b = select_complete_massage()
+                            # if b == None:
+                            #     pygame.display.flip()
+                            print(True)
                         else:
-                            select_error_massage()
+                            # select_error_massage()
+                            print(False)
                     else:
                         pass
 

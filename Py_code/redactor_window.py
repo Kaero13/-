@@ -2,7 +2,7 @@ from select_video import *
 import os
 import tkinter as tk
 from tkinter import ttk
-from mutagen.mp4 import MP4
+from pathlib import Path
 import pymediainfo as mt
 from moviepy import VideoFileClip, concatenate_videoclips
 import threading
@@ -10,6 +10,7 @@ import json
 
 class Redactor:
     def __init__(self, video_path, video_output_path):
+        self.temp_path = os.path.join((Path(__file__).parent.parent), "temp")
         self.video_path = video_path
         self.path = None
         self.video_output_path = video_output_path
@@ -72,18 +73,19 @@ class Redactor:
 
     def glue_video(self):
         try:
-            clip_one = VideoFileClip(self.first_pol_video.get())
-            clip_two = VideoFileClip(self.second_pol_video.get())
+            if os.path.splitext(self.first_pol_video.get())[1] == os.path.splitext(self.second_pol_video.get())[1]:
+                clip_one = VideoFileClip(self.first_pol_video.get())
+                clip_two = VideoFileClip(self.second_pol_video.get())
 
-            final_video = concatenate_videoclips([clip_one, clip_two], method="compose")
+                final_video = concatenate_videoclips([clip_one, clip_two], method="compose")
 
-            write = os.path.join(self.video_output_path, "videos")
-            output_path = os.path.join(write, (self.video_name_val.get() + ".mp4"))
-            final_video.write_videofile(output_path, codec='libx264', audio_codec='aac')
+                write = os.path.join(self.video_output_path, "videos")
+                output_path = os.path.join(write, (self.video_name_val.get() + ".mp4"))
+                final_video.write_videofile(output_path, codec='libx264', audio_codec='aac',temp_audiofile_path=self.temp_path)
 
-            clip_one.close()
-            clip_two.close()
-            final_video.close()
+                clip_one.close()
+                clip_two.close()
+                final_video.close()
 
         finally:
             self.root.after(0, self.enable_glue_button)
@@ -149,7 +151,7 @@ class Redactor:
         self.button_glue.grid(row=0, column=2, )
 
         time_frame = ttk.Frame(self.root)
-        time_frame.pack(padx=5, pady=5)
+        time_frame.pack(padx=5, pady=0)
 
         start_label = ttk.Label(time_frame, text="Начало: 0.0")
         start_label.grid(row=0, column=1)
@@ -178,6 +180,12 @@ class Redactor:
 
         audio_button = tk.Button(time_frame, text="Выгрузить аудиодорожку", command=self.get_audio_file)
         audio_button.grid(row=1, column=5)
+
+        info_frame = ttk.Frame(self.root)
+        info_frame.pack(padx=5, pady=5)
+
+        info_glue = ttk.Label(info_frame, text="Склеивать можно только видео одно и того же расширения")
+        info_glue.pack(padx=1, pady=2)
 
         def on_slider_change(event):
             start_val = self.slider_start.get()
@@ -211,4 +219,4 @@ if __name__ == "__main__":
         output_path = sys.argv[2]
         Redactor(video_path, output_path)
 
-#Redactor(r"C:\Users\Acer\PycharmProjects\PythonProject\video redactor\video2\file_example_AVI_480_750kB.avi", r"D:\-\Kaero_videos")
+Redactor(r"C:\Users\Acer\PycharmProjects\PythonProject\video redactor\video2\file_example_AVI_480_750kB.avi", r"C:\Users\Acer\PycharmProjects\PythonProject\video redactor\video2")
