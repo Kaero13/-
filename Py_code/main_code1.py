@@ -185,7 +185,6 @@ while rab:
                         #     pygame.display.flip()
                         print(True)
 
-
                     elif dowloand_file == "":
                         pass
                     else:
