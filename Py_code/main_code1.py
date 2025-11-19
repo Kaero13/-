@@ -8,7 +8,6 @@ from button_modul import *
 import os
 import shutil
 from profile_seletc_window import*
-from select_video import select_video_window
 from redactor_window import *
 
 import tkinter as tk
