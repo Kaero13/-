@@ -74,13 +74,14 @@ class Redactor:
     def glue_video(self):
         try:
             if os.path.splitext(self.first_pol_video.get())[1] == os.path.splitext(self.second_pol_video.get())[1]:
+                self.racshirenie = os.path.splitext(self.first_pol_video.get())[1]
                 clip_one = VideoFileClip(self.first_pol_video.get())
                 clip_two = VideoFileClip(self.second_pol_video.get())
 
                 final_video = concatenate_videoclips([clip_one, clip_two], method="compose")
 
                 write = os.path.join(self.video_output_path, "videos")
-                output_path = os.path.join(write, (self.video_name_val.get() + ".mp4"))
+                output_path = os.path.join(write, (self.video_name_val.get() + self.racshirenie))
                 final_video.write_videofile(output_path, codec='libx264', audio_codec='aac',temp_audiofile_path=self.temp_path)
 
                 clip_one.close()
@@ -219,4 +220,4 @@ if __name__ == "__main__":
         output_path = sys.argv[2]
         Redactor(video_path, output_path)
 
-Redactor(r"C:\Users\Acer\PycharmProjects\PythonProject\video redactor\video2\file_example_AVI_480_750kB.avi", r"C:\Users\Acer\PycharmProjects\PythonProject\video redactor\video2")
+# Redactor(r"C:\Users\Acer\PycharmProjects\PythonProject\video redactor\video2\file_example_AVI_480_750kB.avi", r"C:\Users\Acer\PycharmProjects\PythonProject\video redactor\video2")

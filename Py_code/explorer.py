@@ -14,6 +14,14 @@ class Explorer:
         self.root.eval('tk::PlaceWindow . center')
         self.root.mainloop()
 
+    def __str__(self):
+        # self.root.destroy()
+        if self.folder_path in self.select_file :
+            return str(self.select_file)
+        else:
+            return str(self.folder_path + "\\" + self.select_file)
+
+
     def setting(self):
         self.data = os.listdir(self.folder_path)
         self.colwo = len(self.data)
@@ -34,7 +42,7 @@ class Explorer:
 
     def on_select_folder(self, folder_name):
         self.root.destroy()
-        Explorer(folder_name, self.folder_path)
+        self.select_file = str(Explorer(folder_name, self.folder_path))
 
     def on_select_file(self, file_name):
         self.select_file = file_name
@@ -95,4 +103,4 @@ class Explorer:
 
 
 # Explorer(r"C:\Users\Acer\Kaero_video\videos")
-Explorer(r"C:\Users\Acer\Kaero_video",r"C:\Users\Acer\Kaero_video" )
+print(str(Explorer(r"C:\Users\Acer\Kaero_video",r"C:\Users\Acer\Kaero_video" )))

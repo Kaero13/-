@@ -201,9 +201,9 @@ class Profile:
         lable = tk.Label(text="Вы повторно нажали на выбор профиля\n если хотите сменить профиль, то нажмите ОК")
         lable.grid(row = 0, column = 1)
         OK_button = tk.Button(text="Ок", width=5, height=2, command=OK_funct)
-        OK_button.grid(row = 0, column = 1)
+        OK_button.grid(row = 1, column = 1)
         Exit_button = tk.Button(text="Выйти", width=5, height=2, command=exit_command)
-        Exit_button.grid(row = 0, column = 2,)
+        Exit_button.grid(row = 1, column = 2,)
 
         root.mainloop()
 

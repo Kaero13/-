@@ -96,3 +96,4 @@ def select_video_window(path):
     root.mainloop()
     return root.selected
 
+# select_video_window(r"C:\Users\Acer\Kaero_video")
