@@ -23,10 +23,12 @@ class Explorer:
 
     def __str__(self):
         # self.root.destroy()
-        if self.folder_path in self.select_file:
-            return str(self.select_file)
-        else:
-            return str(self.folder_path + "\\" + self.select_file)
+        if self.select_file is not None:
+            if self.folder_path in self.select_file:
+                return str(self.select_file)
+            else:
+                return str(self.folder_path + "\\" + self.select_file)
+        return str(None)
 
     def setting(self):
         self.data = os.listdir(self.folder_path)
@@ -112,6 +114,7 @@ class Redactor:
         self.temp_path = os.path.join((Path(__file__).parent.parent), "temp")
         self.video_path = video_path
         self.path = None
+        self.path2 = None
         self.video_output_path = video_output_path
         self.duration_time = self.get_video_duration(self.video_path) or 117.0
         self.root = tk.Tk()
@@ -122,12 +125,12 @@ class Redactor:
         self.root.mainloop()
 
     def dubl(self):
-        with open('dubl.json', 'w', encoding='utf-8') as f:
+        with open(f"{Path(__file__).parent.parent}\\temp\\dubl.json", 'w', encoding='utf-8') as f:
             dubl = [False]
             json.dump(dubl, f)
 
     def on_closing(self):
-        with open('dubl.json', 'w', encoding='utf-8') as f:
+        with open(f"{Path(__file__).parent.parent}\\temp\\dubl.json", 'w', encoding='utf-8') as f:
             dubl = [True]
             json.dump(dubl, f)
         self.root.destroy()
@@ -156,7 +159,7 @@ class Redactor:
         try:
             file_path = Explorer(self.video_output_path, self.video_output_path)
             if file_path:
-                self.path = file_path
+                self.path_2 = file_path
             self.root.after(0, lambda: self.name_second_video.set(file_path))
         finally:
             print(self.path)
@@ -319,4 +322,4 @@ if __name__ == "__main__":
         output_path = sys.argv[2]
         Redactor(video_path, output_path)
 
-Redactor(r"C:\Users\Acer\PycharmProjects\PythonProject\video redactor\video2\file_example_AVI_480_750kB.avi", r"C:\Users\Acer\PycharmProjects\PythonProject\video redactor\video2")
+# Redactor(r"C:\Users\Acer\PycharmProjects\PythonProject\video redactor\video2\file_example_AVI_480_750kB.avi", r"C:\Users\Acer\PycharmProjects\PythonProject\video redactor\video2")

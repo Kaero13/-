@@ -6,13 +6,19 @@ import tkinter as tk
 import json
 
 class Profile:
-    def __init__(self, dubl):
-        self.prov = None
+    def __init__(self, dubl, prov):
+        self.prov = prov
         self.dubl = dubl
+
+        if self.prov is None:
+            print(">" + f"{self.prov}")
+            return
+
         if self.dubl != True:
             self.prov = True
             self.dubl_click()
-        if self.prov is None or self.prov == False:
+
+        if self.prov is False:
             self.Profile_path = self.path()
             self.json_path = self.path()
             self.root = tk.Tk()
@@ -24,14 +30,13 @@ class Profile:
 
     def load(self):
 
-        # print(self.root.selected_path)
         a = {"First": self.root.selected_path, "Second" : False}
 
-        with open("profile_path_and_dubl.json", "w", encoding="utf-8") as f:
+        with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "w", encoding="utf-8") as f:
             json.dump(a, f)
 
     def on_closing(self):
-        with open("profile_path_and_dubl.json", "w", encoding="utf-8") as f:
+        with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "w", encoding="utf-8") as f:
             json.dump({}, f)
         self.prov = True
         self.root.selected_path = None
@@ -133,6 +138,7 @@ class Profile:
             self.messages_lable_pole_sing.grid(row=2, column=1, padx=5, pady=5)
 
         def sing():
+            self.prov = None
             path = None
             a = self.sing_Nick.get()
             b = self.sing_Password.get()
@@ -141,8 +147,6 @@ class Profile:
                 with open(os.path.join(self.Profile_path, "Profile_Data.json"), "r", encoding="utf-8") as f:
                     data = json.load(f)
 
-                # print(data)
-                # print(a, b)
                 if a in data.keys():
                     if b == data[a]["Password"]:
                         path = data[a]["Video_path"]
@@ -164,11 +168,11 @@ class Profile:
                     self.messages_lable_pole_sing = tk.Label(self.input_frame, text=self.sing_message(c))
                     self.messages_lable_pole_sing.grid(row=3, column=1, padx=5, pady=5)
 
-            except NameError as e:
+            except:
                 if 'messages_lable_pole_sing' in globals():
                     self.messages_lable_pole_sing.destroy()
-
-                self.messages_lable_pole_sing = tk.Label(self.input_frame, text=str(e))
+                c = False
+                self.messages_lable_pole_sing = tk.Label(self.input_frame, text=self.sing_message(c))
                 self.messages_lable_pole_sing.grid(row=3, column=1, padx=5, pady=5)
 
 
@@ -184,15 +188,17 @@ class Profile:
     def dubl_click(self):
         root = tk.Tk()
         def OK_funct():
+            a = {"First": "", "Second": True}
+
+            with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "w", encoding="utf-8") as f:
+                json.dump(a, f)
+
+            with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "r", encoding='utf-8') as f:
+                local_path = json.load(f)
+
+            dubl_prof = str(local_path["Second"])
             exit_command()
-            self.Profile_path = self.path()
-            self.json_path = self.Profile_path
-            self.root = tk.Tk()
-            self.root.selected_path = None
-            self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
-            self.root.eval('tk::PlaceWindow . center')
-            self.prov = False
-            self.select_window()
+            self.__init__(bool(dubl_prof), False)
 
         def exit_command():
             self.prov = True
@@ -209,8 +215,11 @@ class Profile:
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) == 2:
+    if len(sys.argv) == 3:
         dubl = sys.argv[1]
+        prov = sys.argv[2]
         if dubl == str(True):
             dubl = True
-        Profile(dubl)
+        if prov == str(False):
+            prov = False
+        Profile(dubl, prov)

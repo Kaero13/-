@@ -28,10 +28,12 @@ class Explorer:
 
     def __str__(self):
         # self.root.destroy()
-        if self.folder_path in self.select_file:
-            return str(self.select_file)
-        else:
-            return str(self.folder_path + "\\" + self.select_file)
+        if self.select_file is not None:
+            if self.folder_path in self.select_file:
+                return str(self.select_file)
+            else:
+                return str(self.folder_path + "\\" + self.select_file)
+        return str(None)
 
     def setting(self):
         self.data = os.listdir(self.folder_path)
@@ -237,10 +239,10 @@ dubl_red = None
 dubl_prof = str(True)
 
 if dubl_red == None:
-    with open('dubl.json', "w", encoding='utf-8') as f:
+    with open(f"{Path(__file__).parent.parent}\\temp\\dubl.json", "w", encoding='utf-8') as f:
        json.dump(["True"], f)
 
-    with open('dubl.json', "r", encoding='utf-8') as f:
+    with open(f"{Path(__file__).parent.parent}\\temp\\dubl.json", "r", encoding='utf-8') as f:
        dubl_red = json.load(f)
 
 # Инициализация переменных для воспроизведения видео
@@ -301,15 +303,19 @@ while rab:
 
                 subprocess.run([
                     sys.executable,
-                    "profile_seletc_window.py",
-                    dubl_prof
+                    f"{Path(__file__).parent}\\profile_seletc_window.py",
+                    dubl_prof,
+                    str(False)
                 ])
-                with open("profile_path_and_dubl.json", "r", encoding='utf-8') as f:
-                    local_path = json.load(f)
-                if local_path != {}:
-                    dubl_prof = str(local_path["Second"])
-                    main_path = local_path["First"]
-                    # print(dubl_prof, main_path)
+                try:
+                    with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "r", encoding='utf-8') as f:
+                        local_path = json.load(f)
+                    if local_path != {}:
+                        dubl_prof = str(local_path["Second"])
+                        main_path = local_path["First"]
+                except:
+                    print(">" + "error exit")
+
             #Выбор из внутренней памяти
             elif select_button_rect.collidepoint(pygame.mouse.get_pos()):
 
@@ -319,8 +325,11 @@ while rab:
                     # if a == None:
                     #     pygame.display.flip()
                 else:
-                    selected_file = str(Explorer(main_path,main_path))
-                    print(selected_file)
+                    selected_file = Explorer(main_path,main_path)
+                    if selected_file == str(None):
+                        print(False)
+                    else:
+                        selected_file = str(selected_file)
 
                     if selected_file is None:
                         pygame.display.flip()
@@ -345,13 +354,13 @@ while rab:
 
             elif redactor_button_rect.collidepoint(pygame.mouse.get_pos()):
 
-                with open('dubl.json', "r", encoding='utf-8') as f:
+                with open(f"{Path(__file__).parent.parent}\\temp\\dubl.json", "r", encoding='utf-8') as f:
                     dubl_red = json.load(f)
 
                 if dubl_red[0]:
                     subprocess.Popen([
                         sys.executable,
-                        "redactor_window.py",
+                        f"{Path(__file__).parent}\\redactor_window.py",
                         selected_file,
                         main_path,
                     ])
