@@ -1,17 +1,4 @@
-import pygame
-import cv2
-import numpy as np
-import subprocess
-import sys
-
 from button_modul import *
-import os
-import shutil
-from profile_seletc_window import*
-from redactor_window import *
-
-import tkinter as tk
-import os
 
 class Explorer:
     def __init__(self, folder_path, parent_folder):
@@ -91,7 +78,7 @@ class Explorer:
                 if btn_index < self.colwo:
                     file_name = self.data[btn_index]
 
-                    if os.path.isdir(os.path.join(self.folder_path, file_name)) and file_name != "audio":
+                    if os.path.isdir(os.path.join(self.folder_path, file_name)):
                         btn_new = tk.Button(self.column_frame,
                                             text=self.text_min(file_name) + "📁",
                                             width=20,
@@ -276,30 +263,34 @@ while rab:
             #Загрузка во внутреннюю память
             elif load_button_rect.collidepoint(pygame.mouse.get_pos()):
                 if main_path == None:
-                    # a = download_no_profile_error_massage()
-                    # if a == None:
-                    #     pygame.display.flip()
-                    print(False)
+
+                    subprocess.run([
+                        sys.executable,
+                        f"{Path(__file__).parent}\\ERROR.py",
+                        "dow_err_no_profile"
+                    ])
+
                 else:
                     dowloand_file = dowload_video_file()
                     if dowloand_file and dowloand_file != "":
                         shutil.move(dowloand_file, main_path)
-                        # a = download_complete_massage()
-                        # if a == None:
-                        #     pygame.display.flip()
-                        print(True)
+
+                        subprocess.run([
+                            sys.executable,
+                            f"{Path(__file__).parent}\\ERROR.py",
+                            "dow_com"
+                        ])
 
                     elif dowloand_file == "":
                         pass
                     else:
-                        # a_er = download_error_massage()
-                        # if a_er == None:
-                        #     pygame.display.flip()
-                        print(False)
+                        subprocess.run([
+                            sys.executable,
+                            f"{Path(__file__).parent}\\ERROR.py",
+                            "dow_err"
+                        ])
 
             elif profile_button_rect.collidepoint(pygame.mouse.get_pos()):
-                # global main_path
-
 
                 subprocess.run([
                     sys.executable,
@@ -320,14 +311,22 @@ while rab:
             elif select_button_rect.collidepoint(pygame.mouse.get_pos()):
 
                 if main_path == None:
-                    print(True)
-                    # a = selected_error_massage()
-                    # if a == None:
-                    #     pygame.display.flip()
+                    subprocess.run([
+                        sys.executable,
+                        f"{Path(__file__).parent}\\ERROR.py",
+                        "sel_prof_err"
+                    ])
+
                 else:
                     selected_file = Explorer(main_path,main_path)
+
+                    if os.path.splitext(str(selected_file))[1] not in [".mp4",".avi",".mkv",".wmv"]:
+                        print(">" + "error exit: audio in programm ")
+                        selected_file = Explorer(main_path,main_path)
+
                     if selected_file == str(None):
                         print(False)
+
                     else:
                         selected_file = str(selected_file)
 
@@ -342,30 +341,44 @@ while rab:
                         # Проверяем нахождение в папке videos
                         if os.path.commonpath([abs_selected, abs_videos_dir]) == abs_videos_dir:
                             video_sel(selected_file, video_area_width, video_area_height)
-                            # b = select_complete_massage()
-                            # if b == None:
-                            #     pygame.display.flip()
-                            print(True)
+
+                            subprocess.run([
+                                sys.executable,
+                                f"{Path(__file__).parent}\\ERROR.py",
+                                "sel_com"
+                            ])
+
                         else:
-                            # select_error_massage()
-                            print(False)
+
+                            subprocess.run([
+                                sys.executable,
+                                f"{Path(__file__).parent}\\ERROR.py",
+                                "sel_err"
+                            ])
+
                     else:
                         pass
 
             elif redactor_button_rect.collidepoint(pygame.mouse.get_pos()):
+                if selected_file is not None:
+                    with open(f"{Path(__file__).parent.parent}\\temp\\dubl.json", "r", encoding='utf-8') as f:
+                        dubl_red = json.load(f)
 
-                with open(f"{Path(__file__).parent.parent}\\temp\\dubl.json", "r", encoding='utf-8') as f:
-                    dubl_red = json.load(f)
-
-                if dubl_red[0]:
-                    subprocess.Popen([
-                        sys.executable,
-                        f"{Path(__file__).parent}\\redactor_window.py",
-                        selected_file,
-                        main_path,
-                    ])
+                    if dubl_red[0]:
+                        subprocess.Popen([
+                            sys.executable,
+                            f"{Path(__file__).parent}\\redactor_window.py",
+                            selected_file,
+                            main_path,
+                        ])
+                    else:
+                        print(13)
                 else:
-                    print(13)
+                    subprocess.run([
+                        sys.executable,
+                        f"{Path(__file__).parent}\\ERROR.py",
+                        "red_err"
+                    ])
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             mousedown = not mousedown

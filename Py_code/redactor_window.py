@@ -1,11 +1,4 @@
-from tkinter import ttk
-from pathlib import Path
-import pymediainfo as mt
-from moviepy import VideoFileClip, concatenate_videoclips
-import threading
-import json
-import tkinter as tk
-import os
+from button_modul import *
 
 
 class Explorer:

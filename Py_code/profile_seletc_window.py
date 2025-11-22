@@ -1,9 +1,4 @@
-from profile import add_and_create_profile_to_json
-import os.path
-from pathlib import Path
-import button_modul
-import tkinter as tk
-import json
+from button_modul import *
 
 class Profile:
     def __init__(self, dubl, prov):
