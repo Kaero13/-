@@ -1,3 +1,8 @@
+from PyQt6.QtCore import *
+from PyQt6.QtWidgets import *
+from PyQt6.QtGui import *
+from PyQt6.QtMultimedia import *
+from PyQt6.QtMultimediaWidgets import *
 from tkinter import filedialog, messagebox
 from profile import add_and_create_profile_to_json
 import os.path
