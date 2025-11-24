@@ -119,7 +119,7 @@ class VideoRedactor(QMainWindow):
         self.app_screen_geometry = self.frameGeometry()
         self.BackGroundSetting()
         self.gui()
-        self.video_widjet(r"E:\Baby's.Day.Out.1994.HD.720p.2xAVO(Gorchakov,Pronin).Eng.mkv")
+        self.video_widjet(f"{Path(__file__).parent.parent}\\Texture\\WelcomVideo\\vidio.mp4")
 
     def keyPressEvent(self, event):
         key = event.key()
@@ -277,7 +277,14 @@ class VideoRedactor(QMainWindow):
         self.audioPlayer = QAudioOutput()
 
         self.mediaPlayer.setAudioOutput(self.audioPlayer)
+        self.mediaPlayer.mediaStatusChanged.connect(self.cicle_video)
         self.mediaPlayer.setSource(QUrl.fromLocalFile(video_path))
+        self.mediaPlayer.play()
+
+    def cicle_video(self, status):
+        if status == QMediaPlayer.MediaStatus.EndOfMedia:
+            self.mediaPlayer.setPosition(0)  # В начало
+            self.mediaPlayer.play()  # Запускаем снова
 
     def start(self):
         if self.mediaPlayer.isPlaying() == True:
