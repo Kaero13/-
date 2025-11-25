@@ -202,6 +202,36 @@ class VideoRedactor(QMainWindow):
 
         self.volume_images_container.setGeometry(images_x, images_y, images_width, 50)
 
+        self.vl_10.setFixedSize(10, 50)
+        self.vl_10.setScaledContents(True)
+
+        self.vl_20.setFixedSize(10, 50)
+        self.vl_20.setScaledContents(True)
+
+        self.vl_30.setFixedSize(10, 50)
+        self.vl_30.setScaledContents(True)
+
+        self.vl_40.setFixedSize(10, 50)
+        self.vl_40.setScaledContents(True)
+
+        self.vl_50.setFixedSize(10, 50)
+        self.vl_50.setScaledContents(True)
+
+        self.vl_60.setFixedSize(10, 50)
+        self.vl_60.setScaledContents(True)
+
+        self.vl_70.setFixedSize(10, 50)
+        self.vl_70.setScaledContents(True)
+
+        self.vl_80.setFixedSize(10, 50)
+        self.vl_80.setScaledContents(True)
+
+        self.vl_90.setFixedSize(10, 50)
+        self.vl_90.setScaledContents(True)
+
+        self.vl_100.setFixedSize(10, 50)
+        self.vl_100.setScaledContents(True)
+
         if self.original_video_geometry is None:
             self.resize_vide_in_window()
         else:
@@ -276,53 +306,33 @@ class VideoRedactor(QMainWindow):
         # Создаем и добавляем изображения громкости в layout
         self.vl_10 = QLabel()
         self.vl_10.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl1.png"))
-        self.vl_10.setFixedSize(10, 50)
-        self.vl_10.setScaledContents(True)
 
         self.vl_20 = QLabel()
         self.vl_20.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl2.png"))
-        self.vl_20.setFixedSize(10, 50)
-        self.vl_20.setScaledContents(True)
 
         self.vl_30 = QLabel()
         self.vl_30.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl3.png"))
-        self.vl_30.setFixedSize(10, 50)
-        self.vl_30.setScaledContents(True)
 
         self.vl_40 = QLabel()
         self.vl_40.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl4.png"))
-        self.vl_40.setFixedSize(10, 50)
-        self.vl_40.setScaledContents(True)
 
         self.vl_50 = QLabel()
         self.vl_50.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl5.png"))
-        self.vl_50.setFixedSize(10, 50)
-        self.vl_50.setScaledContents(True)
 
         self.vl_60 = QLabel()
         self.vl_60.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl6.png"))
-        self.vl_60.setFixedSize(10, 50)
-        self.vl_60.setScaledContents(True)
 
         self.vl_70 = QLabel()
         self.vl_70.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl7.png"))
-        self.vl_70.setFixedSize(10, 50)
-        self.vl_70.setScaledContents(True)
 
         self.vl_80 = QLabel()
         self.vl_80.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl8.png"))
-        self.vl_80.setFixedSize(10, 50)
-        self.vl_80.setScaledContents(True)
 
         self.vl_90 = QLabel()
         self.vl_90.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl9.png"))
-        self.vl_90.setFixedSize(10, 50)
-        self.vl_90.setScaledContents(True)
 
         self.vl_100 = QLabel()
         self.vl_100.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl10.png"))
-        self.vl_100.setFixedSize(10, 50)
-        self.vl_100.setScaledContents(True)
 
         # Добавляем изображения в layout
         volume_layout.addWidget(self.vl_10)
