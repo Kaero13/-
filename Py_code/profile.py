@@ -1,4 +1,6 @@
 from button_modul import *
+import os
+import json
 
 def fix_path(path):
     if path is None:
@@ -24,7 +26,7 @@ def add_and_create_profile_to_json(Nik, Password, path, json_path, json_name = '
     profile_dict = {}
     if len(Nik)>1 and len(str(Password))>1:
         complete = True
-        profile_dict[Nik] = {"Password" : fix_path(Password), "Video_path" : fix_path(path)}
+        profile_dict[Nik] = {"Password" : fix_path(Password), "Video_path" : fix_path(path), "Fon_path" : ""}
     else:
         complete = False
 

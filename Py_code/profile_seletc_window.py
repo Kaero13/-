@@ -4,7 +4,7 @@ class Profile:
     def __init__(self, dubl, prov):
         self.prov = prov
         self.dubl = dubl
-
+        self.fon = ""
         if self.prov is None:
             print(">" + f"{self.prov}")
             return
@@ -25,7 +25,7 @@ class Profile:
 
     def load(self):
 
-        a = {"First": self.root.selected_path, "Second" : False}
+        a = {"First": self.root.selected_path, "Second" : False, "Third" : self.fon}
 
         with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "w", encoding="utf-8") as f:
             json.dump(a, f)
@@ -145,6 +145,7 @@ class Profile:
                 if a in data.keys():
                     if b == data[a]["Password"]:
                         path = data[a]["Video_path"]
+                        self.fon = data[a]["Fon_path"]
                         self.root.selected_path = path
                         self.load()
                         self.root.destroy()
