@@ -1,8 +1,4 @@
-import json
-import os
-from _ast import Pass
-
-import button_modul
+from button_modul import *
 
 def fix_path(path):
     if path is None:

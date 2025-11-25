@@ -1,15 +1,106 @@
-import pygame
-import cv2
-import numpy as np
-import subprocess
-import sys
-
 from button_modul import *
-import os
-import shutil
-from profile_seletc_window import*
-from select_video import select_video_window
-from redactor_window import *
+
+class Explorer:
+    def __init__(self, folder_path, parent_folder):
+        self.parent_folder = parent_folder
+        self.folder_path = folder_path
+        # print(self.folder_path)
+        self.select_file = None
+        self.root = tk.Tk()
+        self.setting()
+        self.file_btns()
+        self.root.title("Explorer")
+        self.root.eval('tk::PlaceWindow . center')
+        self.root.mainloop()
+
+    def __str__(self):
+        # self.root.destroy()
+        if self.select_file is not None:
+            if self.folder_path in self.select_file:
+                return str(self.select_file)
+            else:
+                return str(self.folder_path + "\\" + self.select_file)
+        return str(None)
+
+    def setting(self):
+        self.data = os.listdir(self.folder_path)
+        self.colwo = len(self.data)
+        self.width = min(4, max(1, (self.colwo + 1) // 2))
+        self.height = (self.colwo + self.width - 1) // self.width
+        self.menu = tk.Menu(self.root)
+        self.root.config(menu=self.menu)
+        self.menu.add_command(label="назад", command=self.back_door)
+        self.btns_frame = tk.Frame(self.root)
+        self.column_frame = tk.Frame(self.btns_frame)
+
+    def text_min(self, text):
+        if len(text) > 12:
+            resoult_text = text[:4] + "..." + text[-6:]
+        else:
+            resoult_text = text
+        return resoult_text
+
+    def on_select_folder(self, folder_name):
+        self.root.destroy()
+        self.select_file = str(Explorer(folder_name, self.folder_path))
+
+    def on_select_file(self, file_name):
+        self.select_file = file_name
+        self.root.destroy()
+
+    def back_door(self):
+        k = 0
+        for i in self.folder_path[::-1]:
+            if i == "\\":
+                k += 1
+                break
+            else:
+                k += 1
+
+        if len(self.parent_folder) <= len(self.folder_path[:-k]):
+            self.root.destroy()
+            Explorer(self.folder_path[:-k], self.parent_folder)
+
+    def file_btns(self):
+
+        btns_field = []
+        self.btns_frame.pack(padx=10, pady=10)
+
+        btns_field.clear()
+
+        for col_id in range(self.width):
+            btns_column = []
+            btns_field.append(btns_column)
+
+            for row_id in range(self.height):
+                btn_index = row_id*self.width + col_id
+
+                if btn_index < self.colwo:
+                    file_name = self.data[btn_index]
+
+                    if os.path.isdir(os.path.join(self.folder_path, file_name)):
+                        btn_new = tk.Button(self.column_frame,
+                                            text=self.text_min(file_name) + "📁",
+                                            width=20,
+                                            height=3,
+                                            bg="green",
+                                            command=lambda v=self.folder_path + "\\" + file_name: self.on_select_folder(v)
+                                            )
+                        btn_new.grid(row=row_id,column=col_id, padx=2, pady=2)
+                        btns_column.append(btn_new)
+                    else:
+                        btn_new = tk.Button(self.column_frame,
+                                            text=self.text_min(file_name),
+                                            width=20,
+                                            height=3,
+                                            command=lambda v=file_name: self.on_select_file(v)
+                                            )
+                        btn_new.grid(row=row_id,column=col_id, padx=2, pady=2)
+                        btns_column.append(btn_new)
+
+                    self.column_frame.pack(side="left")
+                    btns_column.append(self.column_frame)
+
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 project_Folders()       #создание папки для временных файлов
@@ -135,10 +226,10 @@ dubl_red = None
 dubl_prof = str(True)
 
 if dubl_red == None:
-    with open('dubl.json', "w", encoding='utf-8') as f:
+    with open(f"{Path(__file__).parent.parent}\\temp\\dubl.json", "w", encoding='utf-8') as f:
        json.dump(["True"], f)
 
-    with open('dubl.json', "r", encoding='utf-8') as f:
+    with open(f"{Path(__file__).parent.parent}\\temp\\dubl.json", "r", encoding='utf-8') as f:
        dubl_red = json.load(f)
 
 # Инициализация переменных для воспроизведения видео
@@ -172,49 +263,72 @@ while rab:
             #Загрузка во внутреннюю память
             elif load_button_rect.collidepoint(pygame.mouse.get_pos()):
                 if main_path == None:
-                    a = download_no_profile_error_massage()
-                    if a == None:
-                        pygame.display.flip()
+
+                    subprocess.run([
+                        sys.executable,
+                        f"{Path(__file__).parent}\\ERROR.py",
+                        "dow_err_no_profile"
+                    ])
+
                 else:
                     dowloand_file = dowload_video_file()
                     if dowloand_file and dowloand_file != "":
                         shutil.move(dowloand_file, main_path)
-                        a = download_complete_massage()
-                        if a == None:
-                            pygame.display.flip()
+
+                        subprocess.run([
+                            sys.executable,
+                            f"{Path(__file__).parent}\\ERROR.py",
+                            "dow_com"
+                        ])
 
                     elif dowloand_file == "":
                         pass
                     else:
-                        a_er = download_error_massage()
-                        if a_er == None:
-                            pygame.display.flip()
+                        subprocess.run([
+                            sys.executable,
+                            f"{Path(__file__).parent}\\ERROR.py",
+                            "dow_err"
+                        ])
 
             elif profile_button_rect.collidepoint(pygame.mouse.get_pos()):
-                # global main_path
-
 
                 subprocess.run([
                     sys.executable,
-                    "profile_seletc_window.py",
-                    dubl_prof
+                    f"{Path(__file__).parent}\\profile_seletc_window.py",
+                    dubl_prof,
+                    str(False)
                 ])
-                with open("profile_path_and_dubl.json", "r", encoding='utf-8') as f:
-                    local_path = json.load(f)
-                if local_path != {}:
-                    dubl_prof = local_path["Second"]
-                    main_path = local_path["First"]
-                    # print(dubl_prof, main_path)
+                try:
+                    with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "r", encoding='utf-8') as f:
+                        local_path = json.load(f)
+                    if local_path != {}:
+                        dubl_prof = str(local_path["Second"])
+                        main_path = local_path["First"]
+                except:
+                    print(">" + "error exit")
+
             #Выбор из внутренней памяти
             elif select_button_rect.collidepoint(pygame.mouse.get_pos()):
 
                 if main_path == None:
-                    a = selected_error_massage()
-                    if a == None:
-                        pygame.display.flip()
+                    subprocess.run([
+                        sys.executable,
+                        f"{Path(__file__).parent}\\ERROR.py",
+                        "sel_prof_err"
+                    ])
+
                 else:
-                    # print(main_path)
-                    selected_file = select_video_window(main_path)
+                    selected_file = Explorer(main_path,main_path)
+
+                    if os.path.splitext(str(selected_file))[1] not in [".mp4",".avi",".mkv",".wmv"]:
+                        print(">" + "error exit: audio in programm ")
+                        selected_file = Explorer(main_path,main_path)
+
+                    if selected_file == str(None):
+                        print(False)
+
+                    else:
+                        selected_file = str(selected_file)
 
                     if selected_file is None:
                         pygame.display.flip()
@@ -227,28 +341,44 @@ while rab:
                         # Проверяем нахождение в папке videos
                         if os.path.commonpath([abs_selected, abs_videos_dir]) == abs_videos_dir:
                             video_sel(selected_file, video_area_width, video_area_height)
-                            b = select_complete_massage()
-                            if b == None:
-                                pygame.display.flip()
+
+                            subprocess.run([
+                                sys.executable,
+                                f"{Path(__file__).parent}\\ERROR.py",
+                                "sel_com"
+                            ])
+
                         else:
-                            select_error_massage()
+
+                            subprocess.run([
+                                sys.executable,
+                                f"{Path(__file__).parent}\\ERROR.py",
+                                "sel_err"
+                            ])
+
                     else:
                         pass
 
             elif redactor_button_rect.collidepoint(pygame.mouse.get_pos()):
+                if selected_file is not None:
+                    with open(f"{Path(__file__).parent.parent}\\temp\\dubl.json", "r", encoding='utf-8') as f:
+                        dubl_red = json.load(f)
 
-                with open('dubl.json', "r", encoding='utf-8') as f:
-                    dubl_red = json.load(f)
-
-                if dubl_red[0]:
-                    subprocess.Popen([
-                        sys.executable,
-                        "redactor_window.py",
-                        selected_file,
-                        main_path,
-                    ])
+                    if dubl_red[0]:
+                        subprocess.Popen([
+                            sys.executable,
+                            f"{Path(__file__).parent}\\redactor_window.py",
+                            selected_file,
+                            main_path,
+                        ])
+                    else:
+                        print(13)
                 else:
-                    print(13)
+                    subprocess.run([
+                        sys.executable,
+                        f"{Path(__file__).parent}\\ERROR.py",
+                        "red_err"
+                    ])
 
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             mousedown = not mousedown

@@ -1,9 +1,22 @@
-from dataclasses import replace
+from tkinter import filedialog, messagebox
+from profile import add_and_create_profile_to_json
+import os.path
 from pathlib import Path
-import pygame
-
+import button_modul
+import json
+from tkinter import ttk
+from pathlib import Path
+import pymediainfo as mt
+from moviepy import VideoFileClip, concatenate_videoclips
+import threading
+import json
+import cv2
+import numpy as np
+import subprocess
+import sys
 import os
-
+import shutil
+import pygame
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
@@ -103,38 +116,3 @@ def create_rounded_rectangle():
     pygame.draw.rect(rect_surface, border_color, (0, 0, 890, 520), width=3, border_radius=25)
     return rect_surface
 
-def select_error_massage():
-    root = tk.Tk()
-    root.withdraw()
-    messagebox.showerror("Ошибка выбора","Ошибка выбора. Выберите видео из папки videos.")
-    return None
-
-def download_error_massage():
-    root = tk.Tk()
-    root.withdraw()
-    messagebox.showerror("Ошибка загрузки","Ошибка выбора. Загружаемый файл не является видеом.")
-    return None
-
-def select_complete_massage():
-    root = tk.Tk()
-    root.withdraw()
-    messagebox.showinfo("Действие выполнено","Файл был успешно выбран")
-    return None
-
-def download_complete_massage():
-    root = tk.Tk()
-    root.withdraw()
-    messagebox.showinfo("Действие выполнено","Файл был успешно загружен")
-    return None
-
-def selected_error_massage():
-    root = tk.Tk()
-    root.withdraw()
-    messagebox.showerror("Ошибка", "Войдите в профилень, чтобы выбирать видео")
-    return None
-
-def download_no_profile_error_massage():
-    root = tk.Tk()
-    root.withdraw()
-    messagebox.showerror("Ошибка", "Войдите в профилень, чтобы загружать видео")
-    return None
