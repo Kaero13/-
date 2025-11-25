@@ -106,6 +106,8 @@ class VideoRedactor(QMainWindow):
     def __init__(self):
         super().__init__()
         self.original_video_geometry = None
+        self.dubl_prof = str(True)
+        self.main_path = None
         self.setMinimumSize(800, 600)
         self.setWindowTitle("Редактор видео")
         self.desctop_screen_geometry = self.screen().availableGeometry()
@@ -124,8 +126,12 @@ class VideoRedactor(QMainWindow):
     def keyPressEvent(self, event):
         key = event.key()
         modifiers = event.modifiers()
-        if modifiers == Qt.KeyboardModifier.AltModifier and key == Qt.Key.Key_Return:
-           self.fullscreen(self.original_video_geometry)
+        if modifiers == Qt.KeyboardModifier.AltModifier:
+            if key == Qt.Key.Key_Return:
+               self.fullscreen(self.original_video_geometry)
+
+            if key == Qt.Key.Key_P:
+                self.profile_function()
 
         if Qt.Key.Key_Space == key:
             self.start()
@@ -166,10 +172,34 @@ class VideoRedactor(QMainWindow):
         self.start_button.setGeometry(start_x, start_y, int(start_height // 4.3), int(start_height // 4.3))
 
         self.open_button.setIconSize(QSize(int(start_height // 4.5), int(start_height // 4.5)))
-        self.open_button.setGeometry(   start_x + int(start_x // 4.5), start_y, int(frame_height // 4.3), int(frame_height // 4.3))
+        self.open_button.setGeometry(start_x + int(start_x // 4.5), start_y, int(frame_height // 4.3),
+                                     int(frame_height // 4.3))
 
         self.profile_button.setIconSize(QSize(int(start_height // 4.5), int(start_height // 4.5)))
-        self.profile_button.setGeometry(start_x + int(start_x // 2.3), start_y, int(frame_height // 4.3), int(frame_height // 4.3))
+        self.profile_button.setGeometry(start_x + int(start_x // 2.3), start_y, int(frame_height // 4.3),
+                                        int(frame_height // 4.3))
+
+        self.load_button.setIconSize(QSize(int(start_height // 4.5), int(start_height // 4.5)))
+        self.load_button.setGeometry(start_x - int(start_x // 4.2), start_y, int(frame_height // 4.3),
+                                     int(frame_height // 4.3))
+
+        self.redactor_button.setIconSize(QSize(int(start_height // 4.5), int(start_height // 4.5)))
+        self.redactor_button.setGeometry(start_x - int(start_x // 2.1), start_y, int(frame_height // 4.3),
+                                         int(frame_height // 4.3))
+
+        slider_x = int(start_x + (start_x // 1.4))
+        slider_y = int(start_y + (start_y * 0.019))
+        slider_width = int(frame_height // 3.5)
+        slider_height = int(frame_height // 3.5)
+
+        self.volume_slider.setGeometry(slider_x, slider_y, slider_width, slider_height)
+
+        # Изображения громкости над слайдером
+        images_width = 47 * 2 + 2
+        images_x = slider_x
+        images_y = slider_y - 10
+
+        self.volume_images_container.setGeometry(images_x, images_y, images_width, 50)
 
         if self.original_video_geometry is None:
             self.resize_vide_in_window()
@@ -210,11 +240,6 @@ class VideoRedactor(QMainWindow):
         self.bacground_lable.lower()
 
     def gui(self):
-        frame_width = int(self.width() // 1.5)
-        frame_height = int(self.height() // 1.5)
-        frame_x = int((self.width() - frame_width) * 1.25)
-        frame_y = int((self.height() - frame_height) * 2.25)
-
         self.start_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\start_button.png"), "", self)
         self.start_button.clicked.connect(self.start)
 
@@ -222,8 +247,91 @@ class VideoRedactor(QMainWindow):
         self.open_button.clicked.connect(self.open_funct)
 
         self.profile_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\select_and_registr_profile.png"), "", self)
-        # self.profile_button.clicked.connect()
+        self.profile_button.clicked.connect(self.profile_function)
 
+        self.load_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\load_button.png"), "", self)
+        self.load_button.clicked.connect(self.open_function)
+
+        self.redactor_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\redactor_button.png"), "", self)
+        # self.redactor_button.clicked.connect()
+
+        self.volume_slider = QSlider(Qt.Orientation.Horizontal, self)
+        self.volume_slider.setValue(100)
+        self.volume_slider.setRange(0, 100)
+        self.volume_slider.valueChanged.connect(self.volume_function_slider)
+
+        self.volume_images_container = QWidget(self)
+
+        # Горизонтальный layout для изображений
+        volume_layout = QHBoxLayout(self.volume_images_container)
+        volume_layout.setSpacing(2)  # Минимальное расстояние между изображениями
+        volume_layout.setContentsMargins(0, 0, 0, 0)
+        volume_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+
+        # Создаем и добавляем изображения громкости в layout
+        self.vl_10 = QLabel()
+        self.vl_10.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl1.png"))
+        self.vl_10.setFixedSize(10, 50)
+        self.vl_10.setScaledContents(True)
+
+        self.vl_20 = QLabel()
+        self.vl_20.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl2.png"))
+        self.vl_20.setFixedSize(10, 50)
+        self.vl_20.setScaledContents(True)
+
+        self.vl_30 = QLabel()
+        self.vl_30.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl3.png"))
+        self.vl_30.setFixedSize(10, 50)
+        self.vl_30.setScaledContents(True)
+
+        self.vl_40 = QLabel()
+        self.vl_40.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl4.png"))
+        self.vl_40.setFixedSize(10, 50)
+        self.vl_40.setScaledContents(True)
+
+        self.vl_50 = QLabel()
+        self.vl_50.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl5.png"))
+        self.vl_50.setFixedSize(10, 50)
+        self.vl_50.setScaledContents(True)
+
+        self.vl_60 = QLabel()
+        self.vl_60.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl6.png"))
+        self.vl_60.setFixedSize(10, 50)
+        self.vl_60.setScaledContents(True)
+
+        self.vl_70 = QLabel()
+        self.vl_70.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl7.png"))
+        self.vl_70.setFixedSize(10, 50)
+        self.vl_70.setScaledContents(True)
+
+        self.vl_80 = QLabel()
+        self.vl_80.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl8.png"))
+        self.vl_80.setFixedSize(10, 50)
+        self.vl_80.setScaledContents(True)
+
+        self.vl_90 = QLabel()
+        self.vl_90.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl9.png"))
+        self.vl_90.setFixedSize(10, 50)
+        self.vl_90.setScaledContents(True)
+
+        self.vl_100 = QLabel()
+        self.vl_100.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\volume_texture\\vl10.png"))
+        self.vl_100.setFixedSize(10, 50)
+        self.vl_100.setScaledContents(True)
+
+        # Добавляем изображения в layout
+        volume_layout.addWidget(self.vl_10)
+        volume_layout.addWidget(self.vl_20)
+        volume_layout.addWidget(self.vl_30)
+        volume_layout.addWidget(self.vl_40)
+        volume_layout.addWidget(self.vl_50)
+        volume_layout.addWidget(self.vl_60)
+        volume_layout.addWidget(self.vl_70)
+        volume_layout.addWidget(self.vl_80)
+        volume_layout.addWidget(self.vl_90)
+        volume_layout.addWidget(self.vl_100)
+
+        # Стили для кнопок (остаются без изменений)
         self.start_button.setStyleSheet("""
                 QPushButton {
                     background-color: transparent;
@@ -263,6 +371,32 @@ class VideoRedactor(QMainWindow):
                         }
                     """)
 
+        self.load_button.setStyleSheet("""
+                        QPushButton {
+                            background-color: transparent;
+                            border: none;
+                        }
+                        QPushButton:hover {
+                            background-color: rgba(255, 255, 255, 50);
+                        }
+                        QPushButton:pressed {
+                            background-color: rgba(255, 255, 255, 100);
+                        }
+                    """)
+
+        self.redactor_button.setStyleSheet("""
+                        QPushButton {
+                            background-color: transparent;
+                            border: none;
+                        }
+                        QPushButton:hover {
+                            background-color: rgba(255, 255, 255, 50);
+                        }
+                        QPushButton:pressed {
+                            background-color: rgba(255, 255, 255, 100);
+                        }
+                    """)
+
     def video_widjet(self, video_path):
         frame_width = int(self.size_x_app_screen // 1.75)
         frame_height = int(self.size_y_app_screen // 1.75)
@@ -277,14 +411,9 @@ class VideoRedactor(QMainWindow):
         self.audioPlayer = QAudioOutput()
 
         self.mediaPlayer.setAudioOutput(self.audioPlayer)
-        self.mediaPlayer.mediaStatusChanged.connect(self.cicle_video)
         self.mediaPlayer.setSource(QUrl.fromLocalFile(video_path))
         self.mediaPlayer.play()
-
-    def cicle_video(self, status):
-        if status == QMediaPlayer.MediaStatus.EndOfMedia:
-            self.mediaPlayer.setPosition(0)  # В начало
-            self.mediaPlayer.play()  # Запускаем снова
+        self.mediaPlayer.pause()
 
     def start(self):
         if self.mediaPlayer.isPlaying() == True:
@@ -293,16 +422,67 @@ class VideoRedactor(QMainWindow):
             self.mediaPlayer.play()
 
     def open_funct(self):
-        file = str(self.Explorer("C:\\Users\\Acer\\Kaero_video", "C:\\Users\\Acer\\Kaero_video"))
+        try:
+            file = str(self.Explorer(self.main_path,self.main_path))
 
-        if file != "":
-            self.mediaPlayer.stop()
-            self.mediaPlayer.setSource(QUrl.fromLocalFile(file))
-            self.videoWidjet.update()
-            self.videoWidjet.repaint()
+            if file != "":
+                self.mediaPlayer.stop()
+                self.mediaPlayer.setSource(QUrl.fromLocalFile(file))
+                self.videoWidjet.update()
+                self.videoWidjet.repaint()
+            else:
+                print("File not found")
+        except:
+            subprocess.run([
+                sys.executable,
+                f"{Path(__file__).parent}\\ERROR.py",
+                "sel_err"
+            ])
+    def volume_function_slider(self, value):
+        for i in range(10, 101, 10):
+            eval(f"self.vl_{i}.hide()")
+
+        for i in range(10, value + 1, 10):
+            eval(f"self.vl_{i}.show()")
+
+        self.audioPlayer.setVolume(value)
+
+    def profile_function(self):
+        try:
+            subprocess.run([
+                sys.executable,
+                f"{Path(__file__).parent}\\profile_seletc_window.py",
+                self.dubl_prof,
+                str(False)
+            ])
+        except:
+            print(f"> error exit")
+        try:
+            with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "r", encoding='utf-8') as f:
+                local_path = json.load(f)
+            if local_path != {}:
+                self.dubl_prof = str(local_path["Second"])
+                self.main_path = local_path["First"]
+        except:
+            print(">" + "error exit")
+
+    def open_function(self):
+        if self.main_path != None:
+            file = QFileDialog.getOpenFileName()
+            file = file[0]
+            shutil.move(file, self.main_path)
+
+            subprocess.run([
+                sys.executable,
+                f"{Path(__file__).parent}\\ERROR.py",
+                "dow_com"
+            ])
         else:
-            print("File not found")
-
+            subprocess.run([
+                sys.executable,
+                f"{Path(__file__).parent}\\ERROR.py",
+                "dow_err"
+            ])
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = VideoRedactor()
