@@ -446,6 +446,7 @@ class VideoRedactor(QMainWindow):
                 f"{Path(__file__).parent}\\ERROR.py",
                 "sel_err"
             ])
+
     def volume_function_slider(self, value):
         for i in range(10, 101, 10):
             eval(f"self.vl_{i}.hide()")
