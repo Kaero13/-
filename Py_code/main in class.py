@@ -118,6 +118,7 @@ class VideoRedactor(QMainWindow):
                                            int(self.posit_y_app_screen),
                                            int(self.size_x_app_screen),
                                            int(self.size_y_app_screen))
+        self.app_fon_profile = None
         self.app_screen_geometry = self.frameGeometry()
         self.BackGroundSetting()
         self.gui()
@@ -233,27 +234,31 @@ class VideoRedactor(QMainWindow):
 
         #Фон
         self.bacground_lable = QLabel(self)
-        self.bacground_image = f"{Path(__file__).parent.parent}\\Texture\\fon.jpg"
+        self.bacground_image = f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\fon.jpg"
         self.bacground_lable.setPixmap(QPixmap(self.bacground_image))
         self.bacground_lable.setGeometry(0,0, int(self.size_x_app_screen), int(self.size_y_app_screen))
         self.bacground_lable.setScaledContents(True)
         self.bacground_lable.lower()
 
     def gui(self):
-        self.start_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\start_button.png"), "", self)
+        self.start_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\start_button.png"), "", self)
         self.start_button.clicked.connect(self.start)
 
-        self.open_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\select_button.png"), "", self)
+        self.open_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\select_button.png"), "", self)
         self.open_button.clicked.connect(self.open_funct)
 
-        self.profile_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\select_and_registr_profile.png"), "", self)
+        self.profile_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\select_and_registr_profile.png"), "", self)
         self.profile_button.clicked.connect(self.profile_function)
 
-        self.load_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\load_button.png"), "", self)
+        self.load_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\load_button.png"), "", self)
         self.load_button.clicked.connect(self.open_function)
 
-        self.redactor_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\redactor_button.png"), "", self)
+        self.redactor_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\redactor_button.png"), "", self)
         # self.redactor_button.clicked.connect()
+
+        self.fon_selector_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\redactor_button.png"), "", self)
+        self.fon_selector_button.clicked.connect(self.fon_selector_function)
+
 
         self.volume_slider = QSlider(Qt.Orientation.Horizontal, self)
         self.volume_slider.setValue(100)
@@ -414,11 +419,14 @@ class VideoRedactor(QMainWindow):
         self.mediaPlayer.setSource(QUrl.fromLocalFile(video_path))
         self.mediaPlayer.play()
         self.mediaPlayer.pause()
+        self.start_button.setIcon(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\pause_button.png"))
 
     def start(self):
         if self.mediaPlayer.isPlaying() == True:
             self.mediaPlayer.pause()
+            self.start_button.setIcon(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\pause_button.png"))
         else:
+            self.start_button.setIcon(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\start_button.png"))
             self.mediaPlayer.play()
 
     def open_funct(self):
@@ -445,7 +453,8 @@ class VideoRedactor(QMainWindow):
         for i in range(10, value + 1, 10):
             eval(f"self.vl_{i}.show()")
 
-        self.audioPlayer.setVolume(value)
+        valume = value / 100
+        self.audioPlayer.setVolume(valume)
 
     def profile_function(self):
         try:
@@ -463,6 +472,9 @@ class VideoRedactor(QMainWindow):
             if local_path != {}:
                 self.dubl_prof = str(local_path["Second"])
                 self.main_path = local_path["First"]
+                self.app_fon_profile = local_path["Third"]
+                if self.app_fon_profile != "":
+                    self.auto_fon_select_function()
         except:
             print(">" + "error exit")
 
@@ -483,6 +495,45 @@ class VideoRedactor(QMainWindow):
                 f"{Path(__file__).parent}\\ERROR.py",
                 "dow_err"
             ])
+
+    def fon_load_function(self):
+        with open(f"{Path(__file__).parent.parent}\\Profile_Data\\Profile_Data.json", "r", encoding='utf-8') as f:
+            data = json.load(f)
+
+        for key in data.keys():
+            if data[key]["Video_path"] == self.main_path:
+                filter_string = "Images (*.png *.jpg *.bmp);; Any files (*)"
+                fon_file, _ = QFileDialog.getOpenFileName(self,"Выберите изображение", "", filter_string)[0]
+                if fon_file != "":
+                    fon_name = fon_file.split("/")[-1]
+                    if r"fon_texture" not in fon_file:
+                        shutil.move(fon_file, f"{Path(__file__).parent.parent}\\Texture\\fon_texture")
+                        data[key]["Fon_path"] = f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"
+
+                        self.bacground_lable.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"))
+                    else:
+                        print("> error exit")
+
+    def fon_selector_function(self):
+        if self.main_path is not None:
+            self.app_fon_profile = str(self.Explorer(f"{Path(__file__).parent.parent}\\Texture\\fon_texture",f"{Path(__file__).parent.parent}\\Texture\\fon_texture"))
+            if self.app_fon_profile in ('*.png', '*.jpg', '*.bmp'):
+                self.bacground_lable.setPixmap(QPixmap(self.app_fon_profile))
+            else:
+                self.app_fon_profile = None
+
+            if self.app_fon_profile != None:
+                with open(f"{Path(__file__).parent.parent}\\Profile_Data\\Profile_Data.json", "r", encoding='utf-8') as f:
+                    data = json.load(f)
+                for key in data.keys():
+                    data[key]["Fon_path"] = self.app_fon_profile
+
+                    with open(f"{Path(__file__).parent.parent}\\Profile_Data\\Profile_Data.json", "w", encoding='utf-8') as f:
+                        json.dump(data, f, ensure_ascii=False, indent=4)
+
+    def auto_fon_select_function(self):
+        self.bacground_lable.setPixmap(QPixmap(self.app_fon_profile))
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = VideoRedactor()
