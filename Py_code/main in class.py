@@ -202,35 +202,35 @@ class VideoRedactor(QMainWindow):
 
         self.volume_images_container.setGeometry(images_x, images_y, images_width, 50)
 
-        print(int(frame_width//13.5//frame_width//13.5//10), int(frame_width//13.5))
-        self.vl_10.setFixedSize(int(frame_width//13.5//5), int(frame_width//13.5))
+        print(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
+        self.vl_10.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
         self.vl_10.setScaledContents(True)
 
-        self.vl_20.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
+        self.vl_20.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
         self.vl_20.setScaledContents(True)
 
-        self.vl_30.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
+        self.vl_30.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
         self.vl_30.setScaledContents(True)
 
-        self.vl_40.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
+        self.vl_40.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
         self.vl_40.setScaledContents(True)
 
-        self.vl_50.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
+        self.vl_50.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
         self.vl_50.setScaledContents(True)
 
-        self.vl_60.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
+        self.vl_60.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
         self.vl_60.setScaledContents(True)
 
-        self.vl_70.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
+        self.vl_70.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
         self.vl_70.setScaledContents(True)
 
-        self.vl_80.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
+        self.vl_80.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
         self.vl_80.setScaledContents(True)
 
-        self.vl_90.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
+        self.vl_90.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
         self.vl_90.setScaledContents(True)
 
-        self.vl_100.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
+        self.vl_100.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
         self.vl_100.setScaledContents(True)
 
         if self.original_video_geometry is None:
