@@ -1,0 +1,6 @@
+PyQt6
+pygame
+pymediainfo
+moviepy
+opencv-python
+numpy
