@@ -178,6 +178,7 @@ class VideoRedactor(QMainWindow):
     def __init__(self):
         super().__init__()
         project_Folders()
+        self.vide_select_file = None
         self.original_video_geometry = None
         self.dubl_prof = str(True)
         self.main_path = None
@@ -280,35 +281,35 @@ class VideoRedactor(QMainWindow):
 
         self.volume_images_container.setGeometry(images_x, images_y, images_width, int(frame_width//13))
 
-        print(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
-        self.vl_10.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
+        print(int(frame_width//13.5), int(frame_width//13.5), f">{self.width()}")
+        self.vl_10.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
         self.vl_10.setScaledContents(True)
 
-        self.vl_20.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
+        self.vl_20.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
         self.vl_20.setScaledContents(True)
 
-        self.vl_30.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
+        self.vl_30.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
         self.vl_30.setScaledContents(True)
 
-        self.vl_40.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
+        self.vl_40.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
         self.vl_40.setScaledContents(True)
 
-        self.vl_50.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
+        self.vl_50.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
         self.vl_50.setScaledContents(True)
 
-        self.vl_60.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
+        self.vl_60.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
         self.vl_60.setScaledContents(True)
 
-        self.vl_70.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
+        self.vl_70.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
         self.vl_70.setScaledContents(True)
 
-        self.vl_80.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
+        self.vl_80.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
         self.vl_80.setScaledContents(True)
 
-        self.vl_90.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
+        self.vl_90.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
         self.vl_90.setScaledContents(True)
 
-        self.vl_100.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
+        self.vl_100.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
         self.vl_100.setScaledContents(True)
 
         if self.original_video_geometry is None:
@@ -363,7 +364,7 @@ class VideoRedactor(QMainWindow):
         self.load_button.clicked.connect(self.start_load_selector_class)
 
         self.redactor_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\redactor_button.png"), "", self)
-        # self.redactor_button.clicked.connect()
+        self.redactor_button.clicked.connect(self.redactor_function)
 
         self.fon_selector_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\fon_selector.png"), "", self)
         self.fon_selector_button.clicked.connect(self.fon_selector_function)
@@ -527,25 +528,27 @@ class VideoRedactor(QMainWindow):
         self.mediaPlayer.setSource(QUrl.fromLocalFile(video_path))
         self.mediaPlayer.play()
         self.mediaPlayer.pause()
-        self.start_button.setIcon(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\pause_button.png"))
+        self.start_button.setIcon(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\start_button.png"))
+        self.start_button.setEnabled(False)
 
     def start(self):
         if self.mediaPlayer.isPlaying() == True:
             self.mediaPlayer.pause()
-            self.start_button.setIcon(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\pause_button.png"))
-        else:
             self.start_button.setIcon(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\start_button.png"))
+        else:
+            self.start_button.setIcon(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\pause_button.png"))
             self.mediaPlayer.play()
 
     def open_funct(self):
         try:
-            file = str(self.Explorer(self.main_path,self.main_path))
+            self.vide_select_file = str(self.Explorer(self.main_path,self.main_path))
 
-            if file != "":
+            if self.vide_select_file != "":
                 self.mediaPlayer.stop()
-                self.mediaPlayer.setSource(QUrl.fromLocalFile(file))
+                self.mediaPlayer.setSource(QUrl.fromLocalFile(self.vide_select_file))
                 self.videoWidjet.update()
                 self.videoWidjet.repaint()
+                self.start_button.setEnabled(True)
             else:
                 print("File not found")
         except:
@@ -574,7 +577,7 @@ class VideoRedactor(QMainWindow):
                 str(False)
             ])
         except Exception as e:
-            print(f"Ошибка: {e}")
+            print(f"Ошибка > {e} <")
         try:
             with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "r", encoding='utf-8') as f:
                 local_path = json.load(f)
@@ -585,7 +588,7 @@ class VideoRedactor(QMainWindow):
                 if self.app_fon_profile != "":
                     self.auto_fon_select_function()
         except Exception as e:
-            print(f"Ошибка: {e}")
+            print(f"Ошибка > {e} <")
 
     def video_load_function(self):
         try:
@@ -608,7 +611,7 @@ class VideoRedactor(QMainWindow):
                     "dow_err"
                 ])
         except Exception as e:
-            print(f"Ошибка: {e}")
+            print(f"Ошибка > {e} <")
 
     def fon_load_function(self):
         with open(f"{Path(__file__).parent.parent}\\Profile_Data\\Profile_Data.json", "r", encoding='utf-8') as f:
@@ -629,7 +632,7 @@ class VideoRedactor(QMainWindow):
                         else:
                             print("> error exit")
             except Exception as e:
-                print(f"Ошибка: {e}")
+                print(f"Ошибка > {e} <")
 
     def fon_selector_function(self):
         if self.main_path is not None:
@@ -658,6 +661,34 @@ class VideoRedactor(QMainWindow):
     def start_load_selector_class(self):
         loader = VideoRedactor.Load_selector(self)
         loader.exec()
+
+    def redactor_function(self):
+        if self.main_path != None:
+            try:
+                if self.vide_select_file != None:
+                    subprocess.run([
+                        sys.executable,
+                        f"{Path(__file__).parent}\\redactor_window.py",
+                        self.vide_select_file,
+                        self.main_path
+                    ])
+                else:
+                    subprocess.run([
+                        sys.executable,
+                        f"{Path(__file__).parent}\\ERROR.py",
+                        "red_err"
+                    ])
+
+            except Exception as e:
+                print(f"Ошибка > {e} <")
+        else:
+            print(f"> {Path(__file__).parent}")
+            subprocess.run([
+                sys.executable,
+                f"{Path(__file__).parent}\\ERROR.py",
+                "red_err"
+            ])
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
