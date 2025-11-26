@@ -103,8 +103,81 @@ class VideoRedactor(QMainWindow):
                         self.column_frame.pack(side="left")
                         btns_column.append(self.column_frame)
 
+    class Load_selector(QDialog):
+        def __init__(self, parent=None):
+            super().__init__(parent)
+            self.parent_window = parent
+            self.setMinimumSize(500, 400)
+            self.setWindowTitle("Окно выбора Загрузчика")
+            self.setMaximumSize(500, 400)
+            self.bacground_lable = QLabel(self)
+            self.bacground_image = f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\fon.jpg"
+            self.bacground_lable.setPixmap(QPixmap(self.bacground_image))
+            self.bacground_lable.setGeometry(0, 0, 500, 400)
+            self.bacground_lable.setScaledContents(True)
+            self.bacground_lable.lower()
+            self.gui()
+
+        def gui(self):
+            self.label_video = QLabel(self)
+            self.label_video.setText("Загрузчик видео в \n папку пользователя")
+            self.load_video_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\load_video_button.png"),"", self)
+            self.load_video_button.clicked.connect(self.on_video_load)
+
+            self.label_fon = QLabel(self)
+            self.label_fon.setText("Загрузчик изображений \n для фона главного ока")
+            self.load_fon_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\load_fon_button.png"),"", self)
+            self.load_fon_button.clicked.connect(self.on_fon_load)
+
+            self.label_video.setGeometry(255, 0, 200, 200)
+            self.load_video_button.setGeometry(250, 130, 200, 200)
+            self.load_video_button.setIconSize(QSize(200, 200))
+
+            self.label_fon.setGeometry(55, 0, 200, 200)
+            self.load_fon_button.setGeometry(50, 130, 200, 200)
+            self.load_fon_button.setIconSize(QSize(200, 200))
+
+            self.label_video.setStyleSheet("font-size: 15px; color: black;")
+            self.load_video_button.setStyleSheet("""
+                            QPushButton {
+                                background-color: transparent;
+                                border: none;
+                            }
+                            QPushButton:hover {
+                                background-color: rgba(255, 255, 255, 50);
+                            }
+                            QPushButton:pressed {
+                                background-color: rgba(255, 255, 255, 100);
+                            }
+                        """)
+
+            self.label_fon.setStyleSheet("font-size: 15px; color: black;")
+            self.load_fon_button.setStyleSheet("""
+                                    QPushButton {
+                                        background-color: transparent;
+                                        border: none;
+                                    }
+                                    QPushButton:hover {
+                                        background-color: rgba(255, 255, 255, 50);
+                                    }
+                                    QPushButton:pressed {
+                                        background-color: rgba(255, 255, 255, 100);
+                                    }
+                                """)
+
+        def on_video_load(self):
+            if self.parent_window:
+                self.parent_window.video_load_function()
+                self.accept()
+
+        def on_fon_load(self):
+            if self.parent_window:
+                self.parent_window.fon_load_function()
+                self.accept()
+
     def __init__(self):
         super().__init__()
+        project_Folders()
         self.original_video_geometry = None
         self.dubl_prof = str(True)
         self.main_path = None
@@ -169,6 +242,7 @@ class VideoRedactor(QMainWindow):
         start_height = int(self.height() // 1.6)
         start_x = int((self.width() - start_width) * 1.25)
         start_y = int((self.height() - start_height) * 2.25)
+
         self.start_button.setIconSize(QSize(int(start_height // 4.5), int(start_height // 4.5)))
         self.start_button.setGeometry(start_x, start_y, int(start_height // 4.3), int(start_height // 4.3))
 
@@ -188,19 +262,23 @@ class VideoRedactor(QMainWindow):
         self.redactor_button.setGeometry(start_x - int(start_x // 2.1), start_y, int(frame_height // 4.3),
                                          int(frame_height // 4.3))
 
+        self.fon_selector_button.setIconSize(QSize(int(start_height // 4.5), int(start_height // 4.5)))
+        self.fon_selector_button.setGeometry(start_x + int(start_x //1.17), start_y - int(start_y // 2), int(frame_height // 4.3),
+                                         int(frame_height // 4.3))
+
         slider_x = int(start_x + (start_x // 1.4))
         slider_y = int(start_y + (start_y * 0.019))
         slider_width = int(frame_height // 3.5)
         slider_height = int(frame_height // 3.5)
 
-        self.volume_slider.setGeometry(slider_x, slider_y, slider_width, slider_height)
+        self.volume_slider.setGeometry(slider_x, int(slider_y + (slider_y * 0.1)), slider_width, int(slider_height//8))
 
         # Изображения громкости над слайдером
-        images_width = 47 * 2 + 2
+        images_width = frame_width
         images_x = slider_x
         images_y = slider_y - 10
 
-        self.volume_images_container.setGeometry(images_x, images_y, images_width, 50)
+        self.volume_images_container.setGeometry(images_x, images_y, images_width, int(frame_width//13))
 
         print(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
         self.vl_10.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
@@ -282,12 +360,12 @@ class VideoRedactor(QMainWindow):
         self.profile_button.clicked.connect(self.profile_function)
 
         self.load_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\load_button.png"), "", self)
-        self.load_button.clicked.connect(self.open_function)
+        self.load_button.clicked.connect(self.start_load_selector_class)
 
         self.redactor_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\redactor_button.png"), "", self)
         # self.redactor_button.clicked.connect()
 
-        self.fon_selector_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\redactor_button.png"), "", self)
+        self.fon_selector_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\fon_selector.png"), "", self)
         self.fon_selector_button.clicked.connect(self.fon_selector_function)
 
 
@@ -413,6 +491,25 @@ class VideoRedactor(QMainWindow):
                         }
                     """)
 
+        self.fon_selector_button.setStyleSheet("""
+                                QPushButton {
+                                    background-color: transparent;
+                                    border: none;
+                                }
+                                QPushButton:hover {
+                                    background-color: rgba(255, 255, 255, 50);
+                                }
+                                QPushButton:pressed {
+                                    background-color: rgba(255, 255, 255, 100);
+                                }
+                            """)
+
+        self.volume_slider.setStyleSheet("""
+            QSlider {
+                background-color: rgba(128, 128, 128, 100);
+            }
+        """)
+
     def video_widjet(self, video_path):
         frame_width = int(self.size_x_app_screen // 1.75)
         frame_height = int(self.size_y_app_screen // 1.75)
@@ -476,8 +573,8 @@ class VideoRedactor(QMainWindow):
                 self.dubl_prof,
                 str(False)
             ])
-        except:
-            print(f"> error exit")
+        except Exception as e:
+            print(f"Ошибка: {e}")
         try:
             with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "r", encoding='utf-8') as f:
                 local_path = json.load(f)
@@ -487,44 +584,52 @@ class VideoRedactor(QMainWindow):
                 self.app_fon_profile = local_path["Third"]
                 if self.app_fon_profile != "":
                     self.auto_fon_select_function()
-        except:
-            print(">" + "error exit")
+        except Exception as e:
+            print(f"Ошибка: {e}")
 
-    def open_function(self):
-        if self.main_path != None:
-            file = QFileDialog.getOpenFileName()
-            file = file[0]
-            shutil.move(file, self.main_path)
+    def video_load_function(self):
+        try:
+            if self.main_path != None:
+                filter_string = "Videos (*.mov *.mp4 *.avi, *.mkv, *.wmv);; Any files (*)"
+                file, _ = QFileDialog.getOpenFileName(self, "Выберите видео", "", filter_string)
 
-            subprocess.run([
-                sys.executable,
-                f"{Path(__file__).parent}\\ERROR.py",
-                "dow_com"
-            ])
-        else:
-            subprocess.run([
-                sys.executable,
-                f"{Path(__file__).parent}\\ERROR.py",
-                "dow_err"
-            ])
+                if file and file != "":
+                    shutil.move(file, self.main_path)
+
+                subprocess.run([
+                    sys.executable,
+                    f"{Path(__file__).parent}\\ERROR.py",
+                    "dow_com"
+                ])
+            else:
+                subprocess.run([
+                    sys.executable,
+                    f"{Path(__file__).parent}\\ERROR.py",
+                    "dow_err"
+                ])
+        except Exception as e:
+            print(f"Ошибка: {e}")
 
     def fon_load_function(self):
         with open(f"{Path(__file__).parent.parent}\\Profile_Data\\Profile_Data.json", "r", encoding='utf-8') as f:
             data = json.load(f)
 
         for key in data.keys():
-            if data[key]["Video_path"] == self.main_path:
-                filter_string = "Images (*.png *.jpg *.bmp);; Any files (*)"
-                fon_file, _ = QFileDialog.getOpenFileName(self,"Выберите изображение", "", filter_string)[0]
-                if fon_file != "":
-                    fon_name = fon_file.split("/")[-1]
-                    if r"fon_texture" not in fon_file:
-                        shutil.move(fon_file, f"{Path(__file__).parent.parent}\\Texture\\fon_texture")
-                        data[key]["Fon_path"] = f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"
+            try:
+                if data[key]["Video_path"] == self.main_path:
+                    filter_string = "Images (*.png *.jpg *.bmp);; Any files (*)"
+                    fon_file, _ = QFileDialog.getOpenFileName(self,"Выберите изображение", "", filter_string)
+                    if fon_file != "":
+                        fon_name = fon_file.split("/")[-1]
+                        if r"fon_texture" not in fon_file:
+                            shutil.move(fon_file, f"{Path(__file__).parent.parent}\\Texture\\fon_texture")
+                            data[key]["Fon_path"] = f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"
 
-                        self.bacground_lable.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"))
-                    else:
-                        print("> error exit")
+                            self.bacground_lable.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"))
+                        else:
+                            print("> error exit")
+            except Exception as e:
+                print(f"Ошибка: {e}")
 
     def fon_selector_function(self):
         if self.main_path is not None:
@@ -549,6 +654,10 @@ class VideoRedactor(QMainWindow):
     def auto_fon_select_function(self):
         print(1)
         self.bacground_lable.setPixmap(QPixmap(self.app_fon_profile))
+
+    def start_load_selector_class(self):
+        loader = VideoRedactor.Load_selector(self)
+        loader.exec()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
