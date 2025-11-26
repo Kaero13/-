@@ -196,11 +196,11 @@ class VideoRedactor(QMainWindow):
         self.volume_slider.setGeometry(slider_x, slider_y, slider_width, slider_height)
 
         # Изображения громкости над слайдером
-        images_width = 47 * 2 + 2
+        images_width = frame_width
         images_x = slider_x
         images_y = slider_y - 10
 
-        self.volume_images_container.setGeometry(images_x, images_y, images_width, 50)
+        self.volume_images_container.setGeometry(images_x, images_y, images_width, int(frame_width//13))
 
         print(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
         self.vl_10.setFixedSize(int(frame_width//13.5//int(frame_width//13.5//10)), int(frame_width//13.5))
