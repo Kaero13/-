@@ -202,34 +202,35 @@ class VideoRedactor(QMainWindow):
 
         self.volume_images_container.setGeometry(images_x, images_y, images_width, 50)
 
-        self.vl_10.setFixedSize(10, 50)
+        print(int(frame_width//13.5//frame_width//13.5//10), int(frame_width//13.5))
+        self.vl_10.setFixedSize(int(frame_width//13.5//5), int(frame_width//13.5))
         self.vl_10.setScaledContents(True)
 
-        self.vl_20.setFixedSize(10, 50)
+        self.vl_20.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
         self.vl_20.setScaledContents(True)
 
-        self.vl_30.setFixedSize(10, 50)
+        self.vl_30.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
         self.vl_30.setScaledContents(True)
 
-        self.vl_40.setFixedSize(10, 50)
+        self.vl_40.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
         self.vl_40.setScaledContents(True)
 
-        self.vl_50.setFixedSize(10, 50)
+        self.vl_50.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
         self.vl_50.setScaledContents(True)
 
-        self.vl_60.setFixedSize(10, 50)
+        self.vl_60.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
         self.vl_60.setScaledContents(True)
 
-        self.vl_70.setFixedSize(10, 50)
+        self.vl_70.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
         self.vl_70.setScaledContents(True)
 
-        self.vl_80.setFixedSize(10, 50)
+        self.vl_80.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
         self.vl_80.setScaledContents(True)
 
-        self.vl_90.setFixedSize(10, 50)
+        self.vl_90.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
         self.vl_90.setScaledContents(True)
 
-        self.vl_100.setFixedSize(10, 50)
+        self.vl_100.setFixedSize(int(frame_width//13.5//10), int(frame_width//13.5))
         self.vl_100.setScaledContents(True)
 
         if self.original_video_geometry is None:
@@ -528,7 +529,9 @@ class VideoRedactor(QMainWindow):
     def fon_selector_function(self):
         if self.main_path is not None:
             self.app_fon_profile = str(self.Explorer(f"{Path(__file__).parent.parent}\\Texture\\fon_texture",f"{Path(__file__).parent.parent}\\Texture\\fon_texture"))
-            if self.app_fon_profile in ('*.png', '*.jpg', '*.bmp'):
+
+            if os.path.splitext(self.app_fon_profile)[-1] in ('.png', '.jpg', '.bmp', '.jpeg'):
+                print(2)
                 self.bacground_lable.setPixmap(QPixmap(self.app_fon_profile))
             else:
                 self.app_fon_profile = None
@@ -537,12 +540,14 @@ class VideoRedactor(QMainWindow):
                 with open(f"{Path(__file__).parent.parent}\\Profile_Data\\Profile_Data.json", "r", encoding='utf-8') as f:
                     data = json.load(f)
                 for key in data.keys():
+                    print(data[key]["Video_path"])
                     data[key]["Fon_path"] = self.app_fon_profile
 
                     with open(f"{Path(__file__).parent.parent}\\Profile_Data\\Profile_Data.json", "w", encoding='utf-8') as f:
                         json.dump(data, f, ensure_ascii=False, indent=4)
 
     def auto_fon_select_function(self):
+        print(1)
         self.bacground_lable.setPixmap(QPixmap(self.app_fon_profile))
 
 if __name__ == "__main__":
