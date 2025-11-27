@@ -17,6 +17,11 @@ class Profile:
             self.Profile_path = self.path()
             self.json_path = self.path()
             self.root = tk.Tk()
+            self.root.resizable(False, False)
+            width = self.root.winfo_width()
+            height = self.root.winfo_height()
+            self.root.minsize(width, height)
+            self.root.maxsize(width, height)
             self.root.selected_path = None
             self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
             self.root.eval('tk::PlaceWindow . center')
@@ -119,17 +124,27 @@ class Profile:
 
         def registr():
             try:
-                a = add_and_create_profile_to_json(self.Nick.get(), self.Password.get(), self.folder_pol.get(), self.json_path)
+                if self.Nick.get() == "" or self.Password.get() == "" or self.folder_pol.get() == "":
+                    a = False
+                    if 'messages_lable_pole' in globals():
+                        self.messages_lable_pole.destroy()
 
-                folder_path = Path(self.fix_path(self.folder_pol.get()))
-                folder_path.mkdir(exist_ok=True)
-                in_user_folder(folder_path)
+                    self.messages_lable_pole = tk.Label(self.input_frame, text=self.message(a))
+                    self.messages_lable_pole.grid(row=3, column = 1, padx = 5, pady = 5)
+                else:
+                    a = True
+                    add_and_create_profile_to_json(self.Nick.get(), self.Password.get(), self.folder_pol.get(),
+                                                       self.json_path)
 
-                if 'messages_lable_pole' in globals():
-                    self.messages_lable_pole.destroy()
+                    folder_path = Path(self.fix_path(self.folder_pol.get()))
+                    folder_path.mkdir(exist_ok=True)
+                    in_user_folder(folder_path)
 
-                self.messages_lable_pole = tk.Label(self.input_frame, text=self.message(a))
-                self.messages_lable_pole.grid(row=3, column = 1, padx = 5, pady = 5)
+                    if 'messages_lable_pole' in globals():
+                        self.messages_lable_pole.destroy()
+
+                    self.messages_lable_pole = tk.Label(self.input_frame, text=self.message(a))
+                    self.messages_lable_pole.grid(row=3, column = 1, padx = 5, pady = 5)
 
             except Exception as e:
                 subprocess.run([
@@ -248,13 +263,22 @@ class Profile:
         def exit_command():
             self.prov = True
             root.destroy()
+
+        root.eval('tk::PlaceWindow . center')
+        root.resizable(False, False)
+        width = root.winfo_width()
+        height = root.winfo_height()
+        root.minsize(width, height)
+        root.maxsize(width, height)
         root.protocol("WM_DELETE_WINDOW", exit_command)
+        button_frame = tk.Frame(root)
+        button_frame.grid(row = 1, column = 0)
         lable = tk.Label(text="Вы повторно нажали на выбор профиля\n если хотите сменить профиль, то нажмите ОК")
-        lable.grid(row = 0, column = 1)
-        OK_button = tk.Button(text="Ок", width=5, height=2, command=OK_funct)
-        OK_button.grid(row = 1, column = 1)
-        Exit_button = tk.Button(text="Выйти", width=5, height=2, command=exit_command)
-        Exit_button.grid(row = 1, column = 2,)
+        lable.grid(row = 0, column = 0)
+        OK_button = tk.Button(button_frame, text="Ок", width=5, height=2, command=OK_funct)
+        OK_button.grid( row = 0, column = 0)
+        Exit_button = tk.Button(button_frame, text="Выйти", width=5, height=2, command=exit_command)
+        Exit_button.grid( row = 0, column = 1)
 
         root.mainloop()
 

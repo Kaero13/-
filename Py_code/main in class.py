@@ -15,6 +15,7 @@ class VideoRedactor(QMainWindow):
             self.root.eval('tk::PlaceWindow . center')
             self.root.mainloop()
 
+        #Функция для возврата пути для выбранного видео
         def __str__(self):
             # self.root.destroy()
             if self.select_file is not None:
@@ -24,6 +25,7 @@ class VideoRedactor(QMainWindow):
                     return str(self.folder_path + "\\" + self.select_file)
             return str(None)
 
+        #Настройки окна проводника
         def setting(self):
             self.data = os.listdir(self.folder_path)
             self.colwo = len(self.data)
@@ -35,6 +37,7 @@ class VideoRedactor(QMainWindow):
             self.btns_frame = tk.Frame(self.root)
             self.column_frame = tk.Frame(self.btns_frame)
 
+        #Сокращение текста если он слишком длинный
         def text_min(self, text):
             if len(text) > 12:
                 resoult_text = text[:4] + "..." + text[-6:]
@@ -42,14 +45,17 @@ class VideoRedactor(QMainWindow):
                 resoult_text = text
             return resoult_text
 
+        #Открытие подпапки
         def on_select_folder(self, folder_name):
             self.root.destroy()
             self.select_file = str(VideoRedactor.Explorer(folder_name, self.folder_path))
 
+        #Сохранение выбранного пути видео
         def on_select_file(self, file_name):
             self.select_file = file_name
             self.root.destroy()
 
+        #Функция для возврата в родительскую папку
         def back_door(self):
             k = 0
             for i in self.folder_path[::-1]:
@@ -63,6 +69,7 @@ class VideoRedactor(QMainWindow):
                 self.root.destroy()
                 VideoRedactor.Explorer(self.folder_path[:-k], self.parent_folder)
 
+        #Создание кнопок файлов и папок
         def file_btns(self):
 
             btns_field = []
@@ -119,6 +126,7 @@ class VideoRedactor(QMainWindow):
             self.bacground_lable.lower()
             self.gui()
 
+        #Нстроки окна выбора загрузчика
         def gui(self):
             self.label_video = QLabel(self)
             self.label_video.setText("Загрузчик видео в \n папку пользователя")
@@ -138,7 +146,12 @@ class VideoRedactor(QMainWindow):
             self.load_fon_button.setGeometry(50, 130, 200, 200)
             self.load_fon_button.setIconSize(QSize(200, 200))
 
+            self.on_of_button = QPushButton("Выкл", self)
+            self.on_of_button.setCheckable(True)
+            self.on_of_button.setGeometry(225, 343, 50, 50)
+
             self.label_video.setStyleSheet("font-size: 15px; color: black;")
+
             self.load_video_button.setStyleSheet("""
                             QPushButton {
                                 background-color: transparent;
@@ -153,6 +166,7 @@ class VideoRedactor(QMainWindow):
                         """)
 
             self.label_fon.setStyleSheet("font-size: 15px; color: black;")
+
             self.load_fon_button.setStyleSheet("""
                                     QPushButton {
                                         background-color: transparent;
@@ -166,11 +180,13 @@ class VideoRedactor(QMainWindow):
                                     }
                                 """)
 
+        #Загрузчик видео
         def on_video_load(self):
             if self.parent_window:
                 self.parent_window.video_load_function()
                 self.accept()
 
+        #Загрузчик изображения для фона программы
         def on_fon_load(self):
             if self.parent_window:
                 self.parent_window.fon_load_function()
@@ -199,33 +215,43 @@ class VideoRedactor(QMainWindow):
         self.gui()
         self.video_widjet(f"{Path(__file__).parent.parent}\\Texture\\WelcomVideo\\vidio.mp4")
 
+    #Назначеине комбинаций кнопок для быстрого управления программой
     def keyPressEvent(self, event):
         key = event.key()
         modifiers = event.modifiers()
         if modifiers == Qt.KeyboardModifier.AltModifier:
+
+            #Переход в полноэкранный режим просмотра видео
             if key == Qt.Key.Key_Return:
                self.fullscreen(self.original_video_geometry)
 
+            #Вызов окна регистрации/входа
             elif key == Qt.Key.Key_Q:
                 self.profile_function()
 
+            #Вызов окна выбора загрузчикка
             elif key == Qt.Key.Key_A:
                 self.start_load_selector_class()
 
+            #Вызов проводника по видео
             elif key == Qt.Key.Key_S:
                 self.open_funct()
 
+            #Вызов окна редактора
             elif key == Qt.Key.Key_D:
                 self.redactor_function()
 
+            #Вызов проводника по фонам
             elif key == Qt.Key.Key_W:
                 self.fon_selector_function()
 
+        #Старт/пауза
         if Qt.Key.Key_Space == key:
             self.start()
 
         super().keyPressEvent(event)
 
+    #Функция изменения размера окна видео до полноэкранного режима
     def resize_vide_in_window(self):
         video_frame_width = int(self.width() // 1.75)
         video_frame_height = int(self.height() // 1.75)
@@ -234,6 +260,7 @@ class VideoRedactor(QMainWindow):
 
         self.videoWidjet.setGeometry(video_frame_x, video_frame_y, video_frame_width, video_frame_height)
 
+    #Функция для активации перехода в полноэкранный режим
     def fullscreen(self, geometry):
         if geometry is None:
             self.original_video_geometry = self.videoWidjet.geometry()
@@ -242,62 +269,77 @@ class VideoRedactor(QMainWindow):
             self.resize_vide_in_window()
             self.original_video_geometry = None
 
+    #Функция для выравнивания и изменения размера окна и всех его элементов
     def resizeEvent(self, event):
-        self.bacground_lable.setGeometry(0, 0, self.width(), self.height())
         frame_width = int(self.width() // 1.5)
         frame_height = int(self.height() // 1.5)
         frame_x = (self.width() - frame_width) // 2
         frame_y = (self.height() - frame_height) // 2
 
+        #Настрока размера и позиции фона
+        self.bacground_lable.setGeometry(0, 0, self.width(), self.height())
+
+        #Настрока размера и позиции подложки видео
         self.vide_frame.setGeometry(frame_x, frame_y, frame_width, frame_height)
         self.rectangle_lable.setGeometry(0, 0, frame_width, frame_height)
 
         self.rectangle_round.setGeometry(frame_x, frame_y, frame_width, frame_height)  # Чтобы изображение растягивалось
         self.rectangle_round.raise_()
 
+        #Общий размер кнопок и их позиции
         start_width = int(self.width() // 1.6)
         start_height = int(self.height() // 1.6)
         start_x = int((self.width() - start_width) * 1.25)
         start_y = int((self.height() - start_height) * 2.25)
 
+        #Более точное позиционирование и настройка размера кнопок
+        #Кнопка старт/пауза
         self.start_button.setIconSize(QSize(int(start_height // 4.5), int(start_height // 4.5)))
         self.start_button.setGeometry(start_x, start_y, int(start_height // 4.3), int(start_height // 4.3))
 
+        #Кнопка выбора видео
         self.open_button.setIconSize(QSize(int(start_height // 4.5), int(start_height // 4.5)))
         self.open_button.setGeometry(start_x + int(start_x // 4.5), start_y, int(frame_height // 4.3),
                                      int(frame_height // 4.3))
 
+        #Кнопка регистрации/входа
         self.profile_button.setIconSize(QSize(int(start_height // 4.5), int(start_height // 4.5)))
         self.profile_button.setGeometry(start_x + int(start_x // 2.3), start_y, int(frame_height // 4.3),
                                         int(frame_height // 4.3))
 
+        #Кнопка выбора загрузчика
         self.load_button.setIconSize(QSize(int(start_height // 4.5), int(start_height // 4.5)))
         self.load_button.setGeometry(start_x - int(start_x // 4.2), start_y, int(frame_height // 4.3),
                                      int(frame_height // 4.3))
 
+        #Кнопка редактора
         self.redactor_button.setIconSize(QSize(int(start_height // 4.5), int(start_height // 4.5)))
         self.redactor_button.setGeometry(start_x - int(start_x // 2.1), start_y, int(frame_height // 4.3),
                                          int(frame_height // 4.3))
 
+        #Кнопка выбора фона
         self.fon_selector_button.setIconSize(QSize(int(start_height // 4.5), int(start_height // 4.5)))
         self.fon_selector_button.setGeometry(start_x + int(start_x //1.17), start_y - int(start_y // 2), int(frame_height // 4.3),
                                          int(frame_height // 4.3))
 
+        #Общие настроки позиции и размера слайдера громкости
         slider_x = int(start_x + (start_x // 1.4))
         slider_y = int(start_y + (start_y * 0.019))
         slider_width = int(frame_height // 3.5)
         slider_height = int(frame_height // 3.5)
 
+        #Слайдер громкости
         self.volume_slider.setGeometry(slider_x, int(slider_y + (slider_y * 0.1)), slider_width, int(slider_height//8))
 
-        # Изображения громкости над слайдером
+        # Настройки изображения громкости над слайдером
         images_width = frame_width
         images_x = slider_x
         images_y = slider_y - 10
 
-        print(f"volum_slider > {self.volume_slider.height()} < volum_image_container > {self.volume_images_container.height()} <")
+        #Лайаут хранящий все изображения громкости
         self.volume_images_container.setGeometry(images_x, images_y, images_width, int(frame_height//6.3))
 
+        #Изображения громкости 10, 20, 30, ... , 90, 100
         self.vl_10.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_height//8.5))
         self.vl_10.setScaledContents(True)
 
@@ -328,6 +370,7 @@ class VideoRedactor(QMainWindow):
         self.vl_100.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_height//8.5))
         self.vl_100.setScaledContents(True)
 
+        #Первоначальное назначение размера окна видео и его изменение размера при растягивание окна программы
         if self.original_video_geometry is None:
             self.resize_vide_in_window()
         else:
@@ -335,6 +378,7 @@ class VideoRedactor(QMainWindow):
 
         super().resizeEvent(event)
 
+    #Функция инцилизации фона и подложки видео
     def BackGroundSetting(self):
         #Подложка под видео
         frame_width = int(self.size_x_app_screen // 1.5)
@@ -361,31 +405,39 @@ class VideoRedactor(QMainWindow):
         self.bacground_lable.setScaledContents(True)
         self.bacground_lable.lower()
 
+    #Функия настройки всех кнопок, изображений и слайдера
     def gui(self):
+        # Кнопка старт/пауза
         self.start_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\start_button.png"), "", self)
         self.start_button.clicked.connect(self.start)
 
+        # Кнопка выбора видео
         self.open_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\select_button.png"), "", self)
         self.open_button.clicked.connect(self.open_funct)
 
+        # Кнопка регистрации/входа
         self.profile_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\select_and_registr_profile.png"), "", self)
         self.profile_button.clicked.connect(self.profile_function)
 
+        # Кнопка выбора загрузчика
         self.load_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\load_button.png"), "", self)
         self.load_button.clicked.connect(self.start_load_selector_class)
 
+        # Кнопка редактора
         self.redactor_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\redactor_button.png"), "", self)
         self.redactor_button.clicked.connect(self.redactor_function)
 
+        # Кнопка выбора фона
         self.fon_selector_button = QPushButton(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\fon_selector.png"), "", self)
         self.fon_selector_button.clicked.connect(self.fon_selector_function)
 
-
+        # Слайдер громкости
         self.volume_slider = QSlider(Qt.Orientation.Horizontal, self)
         self.volume_slider.setValue(100)
         self.volume_slider.setRange(0, 100)
         self.volume_slider.valueChanged.connect(self.volume_function_slider)
 
+        #Контейнер для изображений
         self.volume_images_container = QWidget(self)
 
         # Горизонтальный layout для изображений
@@ -437,7 +489,8 @@ class VideoRedactor(QMainWindow):
         volume_layout.addWidget(self.vl_90)
         volume_layout.addWidget(self.vl_100)
 
-        # Стили для кнопок (остаются без изменений)
+        # Стили для кнопок (остаются без изменений в сравнение с оригинальой текстуркой)
+        # Кнопка старт/пауза
         self.start_button.setStyleSheet("""
                 QPushButton {
                     background-color: transparent;
@@ -451,6 +504,7 @@ class VideoRedactor(QMainWindow):
                 }
             """)
 
+        # Кнопка выбора видео
         self.open_button.setStyleSheet("""
                         QPushButton {
                             background-color: transparent;
@@ -464,6 +518,7 @@ class VideoRedactor(QMainWindow):
                         }
                     """)
 
+        # Кнопка регистрации/входа
         self.profile_button.setStyleSheet("""
                         QPushButton {
                             background-color: transparent;
@@ -477,6 +532,7 @@ class VideoRedactor(QMainWindow):
                         }
                     """)
 
+        # Кнопка выбора загрузчика
         self.load_button.setStyleSheet("""
                         QPushButton {
                             background-color: transparent;
@@ -490,6 +546,7 @@ class VideoRedactor(QMainWindow):
                         }
                     """)
 
+        # Кнопка редактора
         self.redactor_button.setStyleSheet("""
                         QPushButton {
                             background-color: transparent;
@@ -503,6 +560,7 @@ class VideoRedactor(QMainWindow):
                         }
                     """)
 
+        # Кнопка выбора фона
         self.fon_selector_button.setStyleSheet("""
                                 QPushButton {
                                     background-color: transparent;
@@ -516,12 +574,14 @@ class VideoRedactor(QMainWindow):
                                 }
                             """)
 
+        # Слайдер громкости
         self.volume_slider.setStyleSheet("""
             QSlider {
                 background-color: rgba(128, 128, 128, 100);
             }
         """)
 
+    # Инцилизация плееера
     def video_widjet(self, video_path):
         frame_width = int(self.size_x_app_screen // 1.75)
         frame_height = int(self.size_y_app_screen // 1.75)
@@ -542,6 +602,7 @@ class VideoRedactor(QMainWindow):
         self.start_button.setIcon(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\start_button.png"))
         self.start_button.setEnabled(False)
 
+    # Функция старт/пауза
     def start(self):
         if self.mediaPlayer.isPlaying() == True:
             self.mediaPlayer.pause()
@@ -550,33 +611,46 @@ class VideoRedactor(QMainWindow):
             self.start_button.setIcon(QIcon(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\pause_button.png"))
             self.mediaPlayer.play()
 
+    # Вызов проводника по видео
     def open_funct(self):
-        try:
-            self.vide_select_file = str(self.Explorer(self.main_path,self.main_path))
-            print(1)
-            if self.vide_select_file is not None:
-                self.mediaPlayer.stop()
-                self.mediaPlayer.setSource(QUrl.fromLocalFile(self.vide_select_file))
-                self.videoWidjet.update()
-                self.videoWidjet.repaint()
-                self.start_button.setEnabled(True)
+        # Проверка на вход в профиль
+        if self.main_path is not None:
+            try:
+                self.vide_select_file = str(self.Explorer(self.main_path,self.main_path))
 
+                # Обновление видео в плеере
+                if self.vide_select_file != str(None):
+                    self.mediaPlayer.stop()
+                    self.mediaPlayer.setSource(QUrl.fromLocalFile(self.vide_select_file))
+                    self.videoWidjet.update()
+                    self.videoWidjet.repaint()
+                    self.start_button.setEnabled(True)
+
+                    # Сообщение о успехе
+                    subprocess.run([
+                        sys.executable,
+                        f"{Path(__file__).parent}\\ERROR.py",
+                        "sel_com"
+                    ])
+
+            # Сообщение об ошибке
+            except Exception as e:
                 subprocess.run([
                     sys.executable,
                     f"{Path(__file__).parent}\\ERROR.py",
-                    "sel_com"
+                    "error",
+                    str(e)
                 ])
-
-            else:
-                print("File not found")
-        except Exception as e:
+        
+        #Сообщение о необходимости войти в профиль 
+        else:
             subprocess.run([
                 sys.executable,
                 f"{Path(__file__).parent}\\ERROR.py",
-                "error",
-                str(e)
+                "sel_err"
             ])
 
+    # Функция настроки громкости
     def volume_function_slider(self, value):
         for i in range(10, 101, 10):
             eval(f"self.vl_{i}.hide()")
@@ -587,7 +661,9 @@ class VideoRedactor(QMainWindow):
         valume = value / 100
         self.audioPlayer.setVolume(valume)
 
+    # Функция рвызова окна входа/регистрации
     def profile_function(self):
+        # Вызов окна
         try:
             subprocess.run([
                 sys.executable,
@@ -595,6 +671,8 @@ class VideoRedactor(QMainWindow):
                 self.dubl_prof,
                 str(False)
             ])
+
+        # Сообщение об ошибке
         except Exception as e:
             subprocess.run([
                 sys.executable,
@@ -603,15 +681,19 @@ class VideoRedactor(QMainWindow):
                 str(e)
             ])
 
+        # Чтение временного файла созданного окном входа/регистрации
         try:
             with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "r", encoding='utf-8') as f:
                 local_path = json.load(f)
+            
             if local_path != {}:
                 self.dubl_prof = str(local_path["Second"])
                 self.main_path = local_path["First"]
                 self.app_fon_profile = local_path["Third"]
                 if self.app_fon_profile != "":
                     self.auto_fon_select_function()
+
+        # Сообщение об ошибке
         except Exception as e:
             subprocess.run([
                 sys.executable,
@@ -620,6 +702,7 @@ class VideoRedactor(QMainWindow):
                 str(e)
             ])
 
+    # Функция загрузки в личную папку видео
     def video_load_function(self):
         try:
             if self.main_path != None:
@@ -629,11 +712,11 @@ class VideoRedactor(QMainWindow):
                 if file and file != "":
                     shutil.move(file, self.main_path)
 
-                subprocess.run([
-                    sys.executable,
-                    f"{Path(__file__).parent}\\ERROR.py",
-                    "dow_com"
-                ])
+                    subprocess.run([
+                        sys.executable,
+                        f"{Path(__file__).parent}\\ERROR.py",
+                        "dow_com"
+                    ])
             else:
                 subprocess.run([
                     sys.executable,
@@ -648,13 +731,19 @@ class VideoRedactor(QMainWindow):
                 str(e)
             ])
 
+    # Функция загрузки изображения фона в папку текстур фона
     def fon_load_function(self):
+        # Проверка на вход в профиль
         if self.main_path != None:
+            
+            # Попытка открытия json с данными пользователей
             try:
                 with open(f"{Path(__file__).parent.parent}\\Profile_Data\\Profile_Data.json", "r", encoding='utf-8') as f:
                     data = json.load(f)
 
                 for key in data.keys():
+                    
+                    # Попытка открытия json для записи нового фона для конкретного пользователя
                     try:
                         if data[key]["Video_path"] == self.main_path:
                             filter_string = "Images (*.png *.jpg *.bmp);; Any files (*)"
@@ -662,6 +751,8 @@ class VideoRedactor(QMainWindow):
                             if fon_file != "":
                                 fon_name = fon_file.split("/")[-1]
                                 if r"fon_texture" not in fon_file:
+                                    if self.Load_selector :
+                                        pass
                                     shutil.move(fon_file, f"{Path(__file__).parent.parent}\\Texture\\fon_texture")
                                     data[key]["Fon_path"] = f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"
 
@@ -678,6 +769,8 @@ class VideoRedactor(QMainWindow):
                     "error",
                     str(e)
                 ])
+
+        # Сообщение о необходимости войти в профиль
         else:
             subprocess.run([
                 sys.executable,
@@ -685,16 +778,19 @@ class VideoRedactor(QMainWindow):
                 "fon_dow_err"
             ])
 
+    # Функция выбора фона 
     def fon_selector_function(self):
+        # Проверка на вход в профиль
         if self.main_path is not None:
             self.app_fon_profile = str(self.Explorer(f"{Path(__file__).parent.parent}\\Texture\\fon_texture",f"{Path(__file__).parent.parent}\\Texture\\fon_texture"))
-            print(2)
+            
             if os.path.splitext(self.app_fon_profile)[-1] in ('.png', '.jpg', '.bmp', '.jpeg'):
                 self.bacground_lable.setPixmap(QPixmap(self.app_fon_profile))
             else:
                 self.app_fon_profile = None
 
             if self.app_fon_profile != None:
+                # Попытка открытия json и  попытка записи нового фона для конкретного пользователя 
                 try:
                     with open(f"{Path(__file__).parent.parent}\\Profile_Data\\Profile_Data.json", "r", encoding='utf-8') as f:
                         data = json.load(f)
@@ -704,6 +800,8 @@ class VideoRedactor(QMainWindow):
 
                         with open(f"{Path(__file__).parent.parent}\\Profile_Data\\Profile_Data.json", "w", encoding='utf-8') as f:
                             json.dump(data, f, ensure_ascii=False, indent=4)
+
+                # Сообщения об ошибке
                 except Exception as e:
                     subprocess.run([
                         sys.executable,
@@ -711,6 +809,7 @@ class VideoRedactor(QMainWindow):
                         "error",
                         str(e)
                     ])
+        # Сообщение о необходимости войти в профиль
         else:
             subprocess.run([
                 sys.executable,
@@ -718,9 +817,11 @@ class VideoRedactor(QMainWindow):
                 "fon_sel_err"
             ])
 
+    # Функция автоподгрузки не стандартного фона
     def auto_fon_select_function(self):
         self.bacground_lable.setPixmap(QPixmap(self.app_fon_profile))
 
+    # Функция открытия окна выбора загрузчика
     def start_load_selector_class(self):
         try:
             loader = VideoRedactor.Load_selector(self)
@@ -733,6 +834,7 @@ class VideoRedactor(QMainWindow):
                 str(e)
             ])
 
+    # Функция открытия редактора
     def redactor_function(self):
         if self.main_path != None:
             try:
@@ -766,6 +868,7 @@ class VideoRedactor(QMainWindow):
             ])
 
 
+# Запуск программы
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = VideoRedactor()

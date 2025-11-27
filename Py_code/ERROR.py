@@ -17,9 +17,6 @@ class Error_messange:
         elif param == "dow_com":
             self.download_complete_massage()
 
-        elif param == "sel_prof_err":
-            self.selected_error_massage()
-
         elif param == "red_err":
             self.redactor_error_message()
 
@@ -50,7 +47,7 @@ class Error_messange:
         root.withdraw()
         messagebox.showinfo("Действие выполнено", "Файл был успешно загружен")
 
-    def selected_error_massage(self):
+    def select_error_massage(self):
         root = tk.Tk()
         root.withdraw()
         messagebox.showerror("Ошибка", "Войдите в профилень, чтобы выбирать видео")
