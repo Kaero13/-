@@ -24,21 +24,36 @@ class Profile:
             self.root.mainloop()
 
     def load(self):
+        try:
+            a = {"First": self.root.selected_path, "Second" : False, "Third" : self.fon}
 
-        a = {"First": self.root.selected_path, "Second" : False, "Third" : self.fon}
-
-        with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "w", encoding="utf-8") as f:
-            json.dump(a, f)
+            with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "w", encoding="utf-8") as f:
+                json.dump(a, f)
+        except Exception as e:
+            subprocess.run([
+                sys.executable,
+                f"{Path(__file__).parent}\\ERROR.py",
+                "error",
+                str(e)
+            ])
 
     def on_closing(self):
-        with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "w", encoding="utf-8") as f:
-            json.dump({}, f)
-        self.prov = True
-        self.root.selected_path = None
-        self.root.destroy()
+        try:
+            with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "w", encoding="utf-8") as f:
+                json.dump({}, f)
+            self.prov = True
+            self.root.selected_path = None
+            self.root.destroy()
+        except Exception as e:
+            subprocess.run([
+                sys.executable,
+                f"{Path(__file__).parent}\\ERROR.py",
+                "error",
+                str(e)
+            ])
 
     def path(self):
-        path = button_modul.get_path()
+        path = get_path()
         return path[3]
 
     def fix_path(self, path):
@@ -103,17 +118,26 @@ class Profile:
         self.gui()
 
         def registr():
-            a = add_and_create_profile_to_json(self.Nick.get(), self.Password.get(), self.folder_pol.get(), self.json_path)
+            try:
+                a = add_and_create_profile_to_json(self.Nick.get(), self.Password.get(), self.folder_pol.get(), self.json_path)
 
-            folder_path = Path(self.fix_path(self.folder_pol.get()))
-            folder_path.mkdir(exist_ok=True)
-            button_modul.in_user_folder(folder_path)
+                folder_path = Path(self.fix_path(self.folder_pol.get()))
+                folder_path.mkdir(exist_ok=True)
+                in_user_folder(folder_path)
 
-            if 'messages_lable_pole' in globals():
-                self.messages_lable_pole.destroy()
+                if 'messages_lable_pole' in globals():
+                    self.messages_lable_pole.destroy()
 
-            self.messages_lable_pole = tk.Label(self.input_frame, text=self.message(a))
-            self.messages_lable_pole.grid(row=3, column = 1, padx = 5, pady = 5)
+                self.messages_lable_pole = tk.Label(self.input_frame, text=self.message(a))
+                self.messages_lable_pole.grid(row=3, column = 1, padx = 5, pady = 5)
+
+            except Exception as e:
+                subprocess.run([
+                    sys.executable,
+                    f"{Path(__file__).parent}\\ERROR.py",
+                    "error",
+                    str(e)
+                ])
 
         def window_sing():
             self.registr_button.grid_forget()
@@ -139,8 +163,17 @@ class Profile:
             b = self.sing_Password.get()
             c = True
             try:
-                with open(os.path.join(self.Profile_path, "Profile_Data.json"), "r", encoding="utf-8") as f:
-                    data = json.load(f)
+                try:
+                    with open(os.path.join(self.Profile_path, "Profile_Data.json"), "r", encoding="utf-8") as f:
+                        data = json.load(f)
+
+                except Exception as e:
+                    subprocess.run([
+                        sys.executable,
+                        f"{Path(__file__).parent}\\ERROR.py",
+                        "error",
+                        str(e)
+                    ])
 
                 if a in data.keys():
                     if b == data[a]["Password"]:
@@ -182,19 +215,35 @@ class Profile:
 
 
     def dubl_click(self):
-        root = tk.Tk()
-        def OK_funct():
-            a = {"First": "", "Second": True}
+        try:
+            root = tk.Tk()
+            def OK_funct():
+                try:
+                    a = {"First": "", "Second": True}
 
-            with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "w", encoding="utf-8") as f:
-                json.dump(a, f)
+                    with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "w", encoding="utf-8") as f:
+                        json.dump(a, f)
 
-            with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "r", encoding='utf-8') as f:
-                local_path = json.load(f)
+                    with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "r", encoding='utf-8') as f:
+                        local_path = json.load(f)
 
-            dubl_prof = str(local_path["Second"])
-            exit_command()
-            self.__init__(bool(dubl_prof), False)
+                    dubl_prof = str(local_path["Second"])
+                    exit_command()
+                    self.__init__(bool(dubl_prof), False)
+                except Exception as e:
+                    subprocess.run([
+                        sys.executable,
+                        f"{Path(__file__).parent}\\ERROR.py",
+                        "error",
+                        str(e)
+                    ])
+        except Exception as e:
+            subprocess.run([
+                sys.executable,
+                f"{Path(__file__).parent}\\ERROR.py",
+                "error",
+                str(e)
+            ])
 
         def exit_command():
             self.prov = True

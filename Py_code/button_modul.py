@@ -3,12 +3,8 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtMultimedia import *
 from PyQt6.QtMultimediaWidgets import *
-from tkinter import filedialog, messagebox
 from profile import add_and_create_profile_to_json
 import os.path
-from pathlib import Path
-import button_modul
-import json
 from tkinter import ttk
 from pathlib import Path
 import pymediainfo as mt
@@ -21,47 +17,8 @@ import subprocess
 import sys
 import os
 import shutil
-import pygame
 import tkinter as tk
 from tkinter import filedialog, messagebox
-
-pygame.init()
-
-
-def select_video_file():
-    root = tk.Tk()
-    root.withdraw()
-
-    videos_path = os.path.abspath('videos')
-    if not os.path.exists('videos'):
-        os.makedirs(videos_path)
-    file_path = filedialog.askopenfilename(
-        title="Выберите видео файл",
-        initialdir=videos_path,
-        filetypes=[
-            ("Видео файлы", "*.mp4 *.avi *.mov *.mkv *.wmv"),
-            ("Все файлы", "*.*")
-        ])
-    root.destroy()
-    return file_path
-
-def dowload_video_file():
-    root = tk.Tk()
-    root.withdraw()
-
-
-    file_path = filedialog.askopenfilename(
-        title="Выберите видео файл",
-        filetypes=[
-            ("Видео файлы", "*.mp4 *.avi *.mov *.mkv *.wmv"),
-            ("Все файлы", "*.*")
-        ])
-    root.destroy()
-    return file_path
-
-
-import os
-from pathlib import Path
 
 def get_path():
     Py_code_dir = Path(__file__).parent
@@ -113,11 +70,4 @@ def project_Folders():
             except Exception as e:
                 print(f"Ошибка удаления при запуске {file_path}: {e}")
 
-def create_rounded_rectangle():
-    rect_surface = pygame.Surface((890, 520), pygame.SRCALPHA)
-    fill_color = (80, 130, 200, 255)
-    border_color = (40, 80, 150, 255)
-    pygame.draw.rect(rect_surface, fill_color, (0, 0, 890, 520), border_radius=25)
-    pygame.draw.rect(rect_surface, border_color, (0, 0, 890, 520), width=3, border_radius=25)
-    return rect_surface
 

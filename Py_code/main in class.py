@@ -8,6 +8,7 @@ class VideoRedactor(QMainWindow):
             # print(self.folder_path)
             self.select_file = None
             self.root = tk.Tk()
+            print("окно")
             self.setting()
             self.file_btns()
             self.root.title("Explorer")
@@ -205,8 +206,20 @@ class VideoRedactor(QMainWindow):
             if key == Qt.Key.Key_Return:
                self.fullscreen(self.original_video_geometry)
 
-            if key == Qt.Key.Key_P:
+            elif key == Qt.Key.Key_Q:
                 self.profile_function()
+
+            elif key == Qt.Key.Key_A:
+                self.start_load_selector_class()
+
+            elif key == Qt.Key.Key_S:
+                self.open_funct()
+
+            elif key == Qt.Key.Key_D:
+                self.redactor_function()
+
+            elif key == Qt.Key.Key_W:
+                self.fon_selector_function()
 
         if Qt.Key.Key_Space == key:
             self.start()
@@ -238,6 +251,9 @@ class VideoRedactor(QMainWindow):
 
         self.vide_frame.setGeometry(frame_x, frame_y, frame_width, frame_height)
         self.rectangle_lable.setGeometry(0, 0, frame_width, frame_height)
+
+        self.rectangle_round.setGeometry(frame_x, frame_y, frame_width, frame_height)  # Чтобы изображение растягивалось
+        self.rectangle_round.raise_()
 
         start_width = int(self.width() // 1.6)
         start_height = int(self.height() // 1.6)
@@ -279,37 +295,37 @@ class VideoRedactor(QMainWindow):
         images_x = slider_x
         images_y = slider_y - 10
 
-        self.volume_images_container.setGeometry(images_x, images_y, images_width, int(frame_width//13))
+        print(f"volum_slider > {self.volume_slider.height()} < volum_image_container > {self.volume_images_container.height()} <")
+        self.volume_images_container.setGeometry(images_x, images_y, images_width, int(frame_height//6.3))
 
-        print(int(frame_width//13.5), int(frame_width//13.5), f">{self.width()}")
-        self.vl_10.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
+        self.vl_10.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_height//8.5))
         self.vl_10.setScaledContents(True)
 
-        self.vl_20.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
+        self.vl_20.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_height//8.5))
         self.vl_20.setScaledContents(True)
 
-        self.vl_30.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
+        self.vl_30.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_height//8.5))
         self.vl_30.setScaledContents(True)
 
-        self.vl_40.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
+        self.vl_40.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_height//8.5))
         self.vl_40.setScaledContents(True)
 
-        self.vl_50.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
+        self.vl_50.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_height//8.5))
         self.vl_50.setScaledContents(True)
 
-        self.vl_60.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
+        self.vl_60.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_height//8.5))
         self.vl_60.setScaledContents(True)
 
-        self.vl_70.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
+        self.vl_70.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_height//8.5))
         self.vl_70.setScaledContents(True)
 
-        self.vl_80.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
+        self.vl_80.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_height//8.5))
         self.vl_80.setScaledContents(True)
 
-        self.vl_90.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
+        self.vl_90.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_height//8.5))
         self.vl_90.setScaledContents(True)
 
-        self.vl_100.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_width//13.5))
+        self.vl_100.setFixedSize(int(int(frame_width//13.5)//5.2), int(frame_height//8.5))
         self.vl_100.setScaledContents(True)
 
         if self.original_video_geometry is None:
@@ -329,17 +345,12 @@ class VideoRedactor(QMainWindow):
         self.vide_frame = QFrame(self)
         self.vide_frame.setGeometry(frame_x, frame_y, frame_width, frame_height)
 
-        rectangle_image = create_rounded_rectangle()
-
         self.rectangle_lable = QLabel(self.vide_frame)
-        width, height = rectangle_image.get_size()
-        image_data = pygame.image.tostring(rectangle_image, "RGBA")
 
-        pqt_image = QImage(image_data, width, height, QImage.Format.Format_RGBA8888)
-        self.rectangle_pqt = QPixmap.fromImage(pqt_image)
+        self.rectangle_round = QLabel(self)
+        self.rectangle_round.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\gui_texture\\rounded_rectangle.png"))
+        self.rectangle_round.setScaledContents(True)
 
-        self.rectangle_lable.setPixmap(self.rectangle_pqt)
-        self.rectangle_lable.setScaledContents(True)  # Чтобы изображение растягивалось
         self.rectangle_lable.setGeometry(0, 0, frame_width, frame_height)
 
         #Фон
@@ -542,20 +553,28 @@ class VideoRedactor(QMainWindow):
     def open_funct(self):
         try:
             self.vide_select_file = str(self.Explorer(self.main_path,self.main_path))
-
-            if self.vide_select_file != "":
+            print(1)
+            if self.vide_select_file is not None:
                 self.mediaPlayer.stop()
                 self.mediaPlayer.setSource(QUrl.fromLocalFile(self.vide_select_file))
                 self.videoWidjet.update()
                 self.videoWidjet.repaint()
                 self.start_button.setEnabled(True)
+
+                subprocess.run([
+                    sys.executable,
+                    f"{Path(__file__).parent}\\ERROR.py",
+                    "sel_com"
+                ])
+
             else:
                 print("File not found")
-        except:
+        except Exception as e:
             subprocess.run([
                 sys.executable,
                 f"{Path(__file__).parent}\\ERROR.py",
-                "sel_err"
+                "error",
+                str(e)
             ])
 
     def volume_function_slider(self, value):
@@ -577,7 +596,13 @@ class VideoRedactor(QMainWindow):
                 str(False)
             ])
         except Exception as e:
-            print(f"Ошибка > {e} <")
+            subprocess.run([
+                sys.executable,
+                f"{Path(__file__).parent}\\ERROR.py",
+                "error",
+                str(e)
+            ])
+
         try:
             with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "r", encoding='utf-8') as f:
                 local_path = json.load(f)
@@ -588,7 +613,12 @@ class VideoRedactor(QMainWindow):
                 if self.app_fon_profile != "":
                     self.auto_fon_select_function()
         except Exception as e:
-            print(f"Ошибка > {e} <")
+            subprocess.run([
+                sys.executable,
+                f"{Path(__file__).parent}\\ERROR.py",
+                "error",
+                str(e)
+            ])
 
     def video_load_function(self):
         try:
@@ -611,56 +641,97 @@ class VideoRedactor(QMainWindow):
                     "dow_err"
                 ])
         except Exception as e:
-            print(f"Ошибка > {e} <")
+            subprocess.run([
+                sys.executable,
+                f"{Path(__file__).parent}\\ERROR.py",
+                "error",
+                str(e)
+            ])
 
     def fon_load_function(self):
-        with open(f"{Path(__file__).parent.parent}\\Profile_Data\\Profile_Data.json", "r", encoding='utf-8') as f:
-            data = json.load(f)
-
-        for key in data.keys():
+        if self.main_path != None:
             try:
-                if data[key]["Video_path"] == self.main_path:
-                    filter_string = "Images (*.png *.jpg *.bmp);; Any files (*)"
-                    fon_file, _ = QFileDialog.getOpenFileName(self,"Выберите изображение", "", filter_string)
-                    if fon_file != "":
-                        fon_name = fon_file.split("/")[-1]
-                        if r"fon_texture" not in fon_file:
-                            shutil.move(fon_file, f"{Path(__file__).parent.parent}\\Texture\\fon_texture")
-                            data[key]["Fon_path"] = f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"
+                with open(f"{Path(__file__).parent.parent}\\Profile_Data\\Profile_Data.json", "r", encoding='utf-8') as f:
+                    data = json.load(f)
 
-                            self.bacground_lable.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"))
-                        else:
-                            print("> error exit")
+                for key in data.keys():
+                    try:
+                        if data[key]["Video_path"] == self.main_path:
+                            filter_string = "Images (*.png *.jpg *.bmp);; Any files (*)"
+                            fon_file, _ = QFileDialog.getOpenFileName(self,"Выберите изображение", "", filter_string)
+                            if fon_file != "":
+                                fon_name = fon_file.split("/")[-1]
+                                if r"fon_texture" not in fon_file:
+                                    shutil.move(fon_file, f"{Path(__file__).parent.parent}\\Texture\\fon_texture")
+                                    data[key]["Fon_path"] = f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"
+
+                                    self.bacground_lable.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"))
+                                else:
+                                    print("> error exit")
+                    except Exception as e:
+                        raise e
+
             except Exception as e:
-                print(f"Ошибка > {e} <")
+                subprocess.run([
+                    sys.executable,
+                    f"{Path(__file__).parent}\\ERROR.py",
+                    "error",
+                    str(e)
+                ])
+        else:
+            subprocess.run([
+                sys.executable,
+                f"{Path(__file__).parent}\\ERROR.py",
+                "fon_dow_err"
+            ])
 
     def fon_selector_function(self):
         if self.main_path is not None:
             self.app_fon_profile = str(self.Explorer(f"{Path(__file__).parent.parent}\\Texture\\fon_texture",f"{Path(__file__).parent.parent}\\Texture\\fon_texture"))
-
+            print(2)
             if os.path.splitext(self.app_fon_profile)[-1] in ('.png', '.jpg', '.bmp', '.jpeg'):
-                print(2)
                 self.bacground_lable.setPixmap(QPixmap(self.app_fon_profile))
             else:
                 self.app_fon_profile = None
 
             if self.app_fon_profile != None:
-                with open(f"{Path(__file__).parent.parent}\\Profile_Data\\Profile_Data.json", "r", encoding='utf-8') as f:
-                    data = json.load(f)
-                for key in data.keys():
-                    print(data[key]["Video_path"])
-                    data[key]["Fon_path"] = self.app_fon_profile
+                try:
+                    with open(f"{Path(__file__).parent.parent}\\Profile_Data\\Profile_Data.json", "r", encoding='utf-8') as f:
+                        data = json.load(f)
+                    for key in data.keys():
+                        print(data[key]["Video_path"])
+                        data[key]["Fon_path"] = self.app_fon_profile
 
-                    with open(f"{Path(__file__).parent.parent}\\Profile_Data\\Profile_Data.json", "w", encoding='utf-8') as f:
-                        json.dump(data, f, ensure_ascii=False, indent=4)
+                        with open(f"{Path(__file__).parent.parent}\\Profile_Data\\Profile_Data.json", "w", encoding='utf-8') as f:
+                            json.dump(data, f, ensure_ascii=False, indent=4)
+                except Exception as e:
+                    subprocess.run([
+                        sys.executable,
+                        f"{Path(__file__).parent}\\ERROR.py",
+                        "error",
+                        str(e)
+                    ])
+        else:
+            subprocess.run([
+                sys.executable,
+                f"{Path(__file__).parent}\\ERROR.py",
+                "fon_sel_err"
+            ])
 
     def auto_fon_select_function(self):
-        print(1)
         self.bacground_lable.setPixmap(QPixmap(self.app_fon_profile))
 
     def start_load_selector_class(self):
-        loader = VideoRedactor.Load_selector(self)
-        loader.exec()
+        try:
+            loader = VideoRedactor.Load_selector(self)
+            loader.exec()
+        except Exception as e:
+            subprocess.run([
+                sys.executable,
+                f"{Path(__file__).parent}\\ERROR.py",
+                "error",
+                str(e)
+            ])
 
     def redactor_function(self):
         if self.main_path != None:
@@ -680,7 +751,12 @@ class VideoRedactor(QMainWindow):
                     ])
 
             except Exception as e:
-                print(f"Ошибка > {e} <")
+                subprocess.run([
+                    sys.executable,
+                    f"{Path(__file__).parent}\\ERROR.py",
+                    "error",
+                    str(e)
+                ])
         else:
             print(f"> {Path(__file__).parent}")
             subprocess.run([

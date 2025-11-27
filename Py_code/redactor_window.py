@@ -154,6 +154,15 @@ class Redactor:
             if file_path:
                 self.path_2 = file_path
             self.root.after(0, lambda: self.name_second_video.set(file_path))
+
+        except Exception as e:
+            subprocess.run([
+                sys.executable,
+                f"{Path(__file__).parent}\\ERROR.py",
+                "error",
+                str(e)
+            ])
+
         finally:
             print(self.path)
 
@@ -182,6 +191,14 @@ class Redactor:
                 clip_one.close()
                 clip_two.close()
                 final_video.close()
+
+        except Exception as e:
+            subprocess.run([
+                sys.executable,
+                f"{Path(__file__).parent}\\ERROR.py",
+                "error",
+                str(e)
+            ])
 
         finally:
             self.root.after(0, self.enable_glue_button)
