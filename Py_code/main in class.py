@@ -1,3 +1,5 @@
+import shutil
+
 from button_modul import *
 
 class VideoRedactor(QMainWindow):
@@ -146,9 +148,10 @@ class VideoRedactor(QMainWindow):
             self.load_fon_button.setGeometry(50, 130, 200, 200)
             self.load_fon_button.setIconSize(QSize(200, 200))
 
-            self.on_of_button = QPushButton("Выкл", self)
+            self.on_of_button = QPushButton("Перемещение", self)
             self.on_of_button.setCheckable(True)
-            self.on_of_button.setGeometry(225, 343, 50, 50)
+            self.on_of_button.setGeometry(200, 343, 100, 50)
+            self.on_of_button.clicked.connect(self.on_of_function)
 
             self.label_video.setStyleSheet("font-size: 15px; color: black;")
 
@@ -191,6 +194,20 @@ class VideoRedactor(QMainWindow):
             if self.parent_window:
                 self.parent_window.fon_load_function()
                 self.accept()
+
+        def on_of_function(self):
+            if self.on_of_button.isChecked():
+                self.on_of_button.setText("Копирование")
+                return 1
+            else:
+                self.on_of_button.setText("Перемещение")
+                return 0
+
+        def on_of_function_global(self):
+            if self.on_of_button.isChecked():
+                return 1
+            else:
+                return 0
 
     def __init__(self):
         super().__init__()
@@ -710,19 +727,32 @@ class VideoRedactor(QMainWindow):
                 file, _ = QFileDialog.getOpenFileName(self, "Выберите видео", "", filter_string)
 
                 if file and file != "":
-                    shutil.move(file, self.main_path)
 
-                    subprocess.run([
-                        sys.executable,
-                        f"{Path(__file__).parent}\\ERROR.py",
-                        "dow_com"
-                    ])
+                    # Проверка на выбор режима загрузчика
+                    if self.loader.on_of_function_global() == 0:
+                        shutil.move(file, self.main_path)
+
+                        subprocess.run([
+                            sys.executable,
+                            f"{Path(__file__).parent}\\ERROR.py",
+                            "dow_com"
+                        ])
+
+                    else:
+                        shutil.copy(file, self.main_path)
+
+                        subprocess.run([
+                            sys.executable,
+                            f"{Path(__file__).parent}\\ERROR.py",
+                            "dow_com"
+                        ])
             else:
                 subprocess.run([
                     sys.executable,
                     f"{Path(__file__).parent}\\ERROR.py",
                     "dow_err"
                 ])
+
         except Exception as e:
             subprocess.run([
                 sys.executable,
@@ -751,12 +781,21 @@ class VideoRedactor(QMainWindow):
                             if fon_file != "":
                                 fon_name = fon_file.split("/")[-1]
                                 if r"fon_texture" not in fon_file:
-                                    if self.Load_selector :
-                                        pass
-                                    shutil.move(fon_file, f"{Path(__file__).parent.parent}\\Texture\\fon_texture")
-                                    data[key]["Fon_path"] = f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"
 
-                                    self.bacground_lable.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"))
+                                    # Проверка на выбор режима загрузчика
+                                    if self.loader.on_of_function_global() == 0:
+                                        shutil.move(fon_file, f"{Path(__file__).parent.parent}\\Texture\\fon_texture")
+                                        data[key]["Fon_path"] = f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"
+
+                                        self.bacground_lable.setPixmap(QPixmap(f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"))
+
+                                    else:
+                                        shutil.copy(fon_file, f"{Path(__file__).parent.parent}\\Texture\\fon_texture")
+                                        data[key]["Fon_path"] = f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"
+
+                                        self.bacground_lable.setPixmap(QPixmap(
+                                            f"{Path(__file__).parent.parent}\\Texture\\fon_texture\\{fon_name}"))
+
                                 else:
                                     print("> error exit")
                     except Exception as e:
@@ -824,8 +863,8 @@ class VideoRedactor(QMainWindow):
     # Функция открытия окна выбора загрузчика
     def start_load_selector_class(self):
         try:
-            loader = VideoRedactor.Load_selector(self)
-            loader.exec()
+            self.loader = VideoRedactor.Load_selector(self)
+            self.loader.exec()
         except Exception as e:
             subprocess.run([
                 sys.executable,

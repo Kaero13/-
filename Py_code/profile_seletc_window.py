@@ -166,7 +166,10 @@ class Profile:
             self.sing_Nick_lable.grid(row=0, column=1, sticky=tk.W)
 
             self.sing_button = tk.Button(self.root, text="Войти", command=sing)
-            self.sing_button.grid(row=1, column=1, padx=5, pady=5)
+            self.sing_button.grid(row=1, column=2, padx=5, pady=5)
+
+            self.sing_button = tk.Button(self.root, text="Вернуться к регистрации", command=self.back_dor)
+            self.sing_button.grid(row=1, column=1)
 
             self.messages_lable_pole_sing = tk.Label(self.input_frame, text="")
             self.messages_lable_pole_sing.grid(row=2, column=1, padx=5, pady=5)
@@ -228,6 +231,15 @@ class Profile:
 
         self.root.mainloop()
 
+    def back_dor(self):
+        self.sing_Nick_lable.forget()
+
+        self.sing_button.forget()
+
+        self.sing_button.forget()
+
+        self.messages_lable_pole_sing.forget()
+        self.gui()
 
     def dubl_click(self):
         try:
