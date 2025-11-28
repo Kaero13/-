@@ -10,14 +10,11 @@ def fix_path(path):
     if "\\" in path:
         path = path.replace("\\", "/")
 
-    try:
-        return os.path.normpath(path)
-    except:
-        return path
+    return path
 
 def add_and_create_profile_to_json(Nik, Password, path, json_path, json_name = 'Profile_Data.json'):
 
-    full_output_path = fix_path(json_path) + "\\" + json_name
+    full_output_path = fix_path(json_path) + "/" + json_name
 
     parent_dir = os.path.dirname(full_output_path)
     if parent_dir:

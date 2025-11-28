@@ -5,7 +5,6 @@ class Explorer:
     def __init__(self, folder_path, parent_folder):
         self.parent_folder = parent_folder
         self.folder_path = folder_path
-        # print(self.folder_path)
         self.select_file = None
         self.root = tk.Tk()
         self.setting()
@@ -20,7 +19,7 @@ class Explorer:
             if self.folder_path in self.select_file:
                 return str(self.select_file)
             else:
-                return str(self.folder_path + "\\" + self.select_file)
+                return str(self.folder_path + "/" + self.select_file)
         return str(None)
 
     def setting(self):
@@ -55,6 +54,11 @@ class Explorer:
             if i == "\\":
                 k += 1
                 break
+
+            if i == "/":
+                k += 1
+                break
+
             else:
                 k += 1
 
@@ -85,7 +89,7 @@ class Explorer:
                                             width=20,
                                             height=3,
                                             bg="green",
-                                            command=lambda v=self.folder_path + "\\" + file_name: self.on_select_folder(v)
+                                            command=lambda v=self.folder_path + "/" + file_name: self.on_select_folder(v)
                                             )
                         btn_new.grid(row=row_id,column=col_id, padx=2, pady=2)
                         btns_column.append(btn_new)
@@ -118,12 +122,12 @@ class Redactor:
         self.root.mainloop()
 
     def dubl(self):
-        with open(f"{Path(__file__).parent.parent}\\temp\\dubl.json", 'w', encoding='utf-8') as f:
+        with open(f"{Path(__file__).parent.parent}/temp/dubl.json", 'w', encoding='utf-8') as f:
             dubl = [False]
             json.dump(dubl, f)
 
     def on_closing(self):
-        with open(f"{Path(__file__).parent.parent}\\temp\\dubl.json", 'w', encoding='utf-8') as f:
+        with open(f"{Path(__file__).parent.parent}/temp/dubl.json", 'w', encoding='utf-8') as f:
             dubl = [True]
             json.dump(dubl, f)
         self.root.destroy()
@@ -158,7 +162,7 @@ class Redactor:
         except Exception as e:
             subprocess.run([
                 sys.executable,
-                f"{Path(__file__).parent}\\ERROR.py",
+                f"{Path(__file__).parent}/ERROR.py",
                 "error",
                 str(e)
             ])
@@ -195,7 +199,7 @@ class Redactor:
         except Exception as e:
             subprocess.run([
                 sys.executable,
-                f"{Path(__file__).parent}\\ERROR.py",
+                f"{Path(__file__).parent}/ERROR.py",
                 "error",
                 str(e)
             ])

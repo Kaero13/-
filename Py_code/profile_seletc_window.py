@@ -32,19 +32,19 @@ class Profile:
         try:
             a = {"First": self.root.selected_path, "Second" : False, "Third" : self.fon}
 
-            with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "w", encoding="utf-8") as f:
+            with open(f"{Path(__file__).parent.parent}/temp/profile_path_and_dubl.json", "w", encoding="utf-8") as f:
                 json.dump(a, f)
         except Exception as e:
             subprocess.run([
                 sys.executable,
-                f"{Path(__file__).parent}\\ERROR.py",
+                f"{Path(__file__).parent}/ERROR.py",
                 "error",
                 str(e)
             ])
 
     def on_closing(self):
         try:
-            with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "w", encoding="utf-8") as f:
+            with open(f"{Path(__file__).parent.parent}/temp/profile_path_and_dubl.json", "w", encoding="utf-8") as f:
                 json.dump({}, f)
             self.prov = True
             self.root.selected_path = None
@@ -52,7 +52,7 @@ class Profile:
         except Exception as e:
             subprocess.run([
                 sys.executable,
-                f"{Path(__file__).parent}\\ERROR.py",
+                f"{Path(__file__).parent}/ERROR.py",
                 "error",
                 str(e)
             ])
@@ -66,8 +66,8 @@ class Profile:
             return None
         elif path.startswith('"') and path.endswith('"'):
             path = path[1:-1]
-        if "\\" in path:
-            path = path.replace("\\", "/")
+        if "/" in path:
+            path = path.replace("/", "/")
 
         try:
             return os.path.normpath(path)
@@ -149,7 +149,7 @@ class Profile:
             except Exception as e:
                 subprocess.run([
                     sys.executable,
-                    f"{Path(__file__).parent}\\ERROR.py",
+                    f"{Path(__file__).parent}/ERROR.py",
                     "error",
                     str(e)
                 ])
@@ -165,11 +165,11 @@ class Profile:
 
             self.sing_Nick_lable.grid(row=0, column=1, sticky=tk.W)
 
-            self.sing_button = tk.Button(self.root, text="Войти", command=sing)
+            self.sing_button = tk.Button(text="Войти", command=sing)
             self.sing_button.grid(row=1, column=2, padx=5, pady=5)
 
-            self.sing_button = tk.Button(self.root, text="Вернуться к регистрации", command=self.back_dor)
-            self.sing_button.grid(row=1, column=1)
+            self.return_button = tk.Button(text="Вернуться к регистрации", command=self.back_dor)
+            self.return_button.grid(row=1, column=1)
 
             self.messages_lable_pole_sing = tk.Label(self.input_frame, text="")
             self.messages_lable_pole_sing.grid(row=2, column=1, padx=5, pady=5)
@@ -188,7 +188,7 @@ class Profile:
                 except Exception as e:
                     subprocess.run([
                         sys.executable,
-                        f"{Path(__file__).parent}\\ERROR.py",
+                        f"{Path(__file__).parent}/ERROR.py",
                         "error",
                         str(e)
                     ])
@@ -232,14 +232,10 @@ class Profile:
         self.root.mainloop()
 
     def back_dor(self):
-        self.sing_Nick_lable.forget()
-
-        self.sing_button.forget()
-
-        self.sing_button.forget()
-
-        self.messages_lable_pole_sing.forget()
-        self.gui()
+        self.input_frame.destroy()
+        self.sing_button.grid_forget()
+        self.return_button.grid_forget()
+        self.select_window()
 
     def dubl_click(self):
         try:
@@ -248,10 +244,10 @@ class Profile:
                 try:
                     a = {"First": "", "Second": True}
 
-                    with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "w", encoding="utf-8") as f:
+                    with open(f"{Path(__file__).parent.parent}/temp/profile_path_and_dubl.json", "w", encoding="utf-8") as f:
                         json.dump(a, f)
 
-                    with open(f"{Path(__file__).parent.parent}\\temp\\profile_path_and_dubl.json", "r", encoding='utf-8') as f:
+                    with open(f"{Path(__file__).parent.parent}/temp/profile_path_and_dubl.json", "r", encoding='utf-8') as f:
                         local_path = json.load(f)
 
                     dubl_prof = str(local_path["Second"])
@@ -260,14 +256,14 @@ class Profile:
                 except Exception as e:
                     subprocess.run([
                         sys.executable,
-                        f"{Path(__file__).parent}\\ERROR.py",
+                        f"{Path(__file__).parent}/ERROR.py",
                         "error",
                         str(e)
                     ])
         except Exception as e:
             subprocess.run([
                 sys.executable,
-                f"{Path(__file__).parent}\\ERROR.py",
+                f"{Path(__file__).parent}/ERROR.py",
                 "error",
                 str(e)
             ])
@@ -278,10 +274,7 @@ class Profile:
 
         root.eval('tk::PlaceWindow . center')
         root.resizable(False, False)
-        width = root.winfo_width()
-        height = root.winfo_height()
-        root.minsize(width, height)
-        root.maxsize(width, height)
+        root.geometry('265x100')
         root.protocol("WM_DELETE_WINDOW", exit_command)
         button_frame = tk.Frame(root)
         button_frame.grid(row = 1, column = 0)
