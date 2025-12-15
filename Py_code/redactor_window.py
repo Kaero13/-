@@ -7,22 +7,26 @@ class Explorer:
         self.folder_path = folder_path
         self.select_file = None
         self.root = tk.Tk()
+        self.root.geometry("720x300")
+        self.root.resizable(False, False)
         self.setting()
         self.file_btns()
         self.root.title("Explorer")
         self.root.eval('tk::PlaceWindow . center')
         self.root.mainloop()
 
+    # Функция для возврата пути для выбранного видео
     def __str__(self):
-        # self.root.destroy()
         if self.select_file is not None:
             if self.folder_path in self.select_file:
                 return str(self.select_file)
             else:
                 return str(self.folder_path + "/" + self.select_file)
-        return str(None)
+        return 0
 
+    # Настройки окна проводника
     def setting(self):
+        self.canvas_frame = tk.Canvas(self.root, width=self.root.cget('width'), height=self.root.cget('height'))
         self.data = os.listdir(self.folder_path)
         self.colwo = len(self.data)
         self.width = min(4, max(1, (self.colwo + 1) // 2))
@@ -30,9 +34,10 @@ class Explorer:
         self.menu = tk.Menu(self.root)
         self.root.config(menu=self.menu)
         self.menu.add_command(label="назад", command=self.back_door)
-        self.btns_frame = tk.Frame(self.root)
+        self.btns_frame = tk.Frame(self.canvas_frame)
         self.column_frame = tk.Frame(self.btns_frame)
 
+    # Сокращение текста если он слишком длинный
     def text_min(self, text):
         if len(text) > 12:
             resoult_text = text[:4] + "..." + text[-6:]
@@ -40,25 +45,23 @@ class Explorer:
             resoult_text = text
         return resoult_text
 
+    # Открытие подпапки
     def on_select_folder(self, folder_name):
         self.root.destroy()
         self.select_file = str(Explorer(folder_name, self.folder_path))
 
+    # Сохранение выбранного пути видео
     def on_select_file(self, file_name):
         self.select_file = file_name
         self.root.destroy()
 
+    # Функция для возврата в родительскую папку
     def back_door(self):
         k = 0
         for i in self.folder_path[::-1]:
-            if i == "\\":
-                k += 1
-                break
-
             if i == "/":
                 k += 1
                 break
-
             else:
                 k += 1
 
@@ -66,10 +69,16 @@ class Explorer:
             self.root.destroy()
             Explorer(self.folder_path[:-k], self.parent_folder)
 
+    # Создание кнопок файлов и папок
     def file_btns(self):
 
+        self.slider = tk.Scrollbar(self.root)
+        self.canvas_frame.configure(yscrollcommand=self.slider.set)
+        self.slider.configure(command=self.canvas_frame.yview)
+        self.slider.pack(side="right", fill="y")
+        self.canvas_frame.pack(fill="both", expand=True)
+
         btns_field = []
-        self.btns_frame.pack(padx=10, pady=10)
 
         btns_field.clear()
 
@@ -78,20 +87,21 @@ class Explorer:
             btns_field.append(btns_column)
 
             for row_id in range(self.height):
-                btn_index = row_id*self.width + col_id
+                btn_index = row_id * self.width + col_id
 
                 if btn_index < self.colwo:
                     file_name = self.data[btn_index]
 
-                    if os.path.isdir(os.path.join(self.folder_path, file_name)) and file_name != "audio":
+                    if os.path.isdir(os.path.join(self.folder_path, file_name)):
                         btn_new = tk.Button(self.column_frame,
                                             text=self.text_min(file_name) + "📁",
                                             width=20,
                                             height=3,
                                             bg="green",
-                                            command=lambda v=self.folder_path + "/" + file_name: self.on_select_folder(v)
+                                            command=lambda
+                                                v=self.folder_path + "/" + file_name: self.on_select_folder(v)
                                             )
-                        btn_new.grid(row=row_id,column=col_id, padx=2, pady=2)
+                        btn_new.grid(row=row_id, column=col_id, padx=2, pady=2)
                         btns_column.append(btn_new)
                     else:
                         btn_new = tk.Button(self.column_frame,
@@ -100,11 +110,24 @@ class Explorer:
                                             height=3,
                                             command=lambda v=file_name: self.on_select_file(v)
                                             )
-                        btn_new.grid(row=row_id,column=col_id, padx=2, pady=2)
+                        btn_new.grid(row=row_id, column=col_id, padx=2, pady=2)
                         btns_column.append(btn_new)
 
                     self.column_frame.pack(side="left")
                     btns_column.append(self.column_frame)
+                    self.canvas_frame.create_window(0, 0, anchor="nw", window=self.btns_frame)
+                    self.canvas_frame.update_idletasks()
+                    self.canvas_frame.config(scrollregion=self.canvas_frame.bbox("all"))
+
+                    self.btns_frame.bind("<Configure>", self.update_reion)
+
+                    self.canvas_frame.bind_all("<MouseWheel>", self.scroll_mousewheel)
+
+    def update_reion(self, event=None):
+        self.canvas_frame.configure(scrollregion=self.canvas_frame.bbox("all"))
+
+    def scroll_mousewheel(self, event):
+        self.canvas_frame.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
 class Redactor:
     def __init__(self, video_path, video_output_path):
@@ -115,23 +138,13 @@ class Redactor:
         self.video_output_path = video_output_path
         self.duration_time = self.get_video_duration(self.video_path) or 117.0
         self.root = tk.Tk()
-        self.dubl()
         self.root.title("Video Redactor")
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.ui()
         self.root.mainloop()
 
-    def dubl(self):
-        with open(f"{Path(__file__).parent.parent}/temp/dubl.json", 'w', encoding='utf-8') as f:
-            dubl = [False]
-            json.dump(dubl, f)
-
     def on_closing(self):
-        with open(f"{Path(__file__).parent.parent}/temp/dubl.json", 'w', encoding='utf-8') as f:
-            dubl = [True]
-            json.dump(dubl, f)
         self.root.destroy()
-
 
     def select_first_video(self):
         thread = threading.Thread(target=self.select_video_file_first)
@@ -140,12 +153,12 @@ class Redactor:
 
     def select_video_file_first(self):
         try:
-            file_path = Explorer(self.video_output_path, self.video_output_path)
-            if file_path:
+            file_path = str(Explorer(self.video_output_path, self.video_output_path))
+            if str(Path(file_path)) != 0:
                 self.path = file_path
             self.root.after(0, lambda: self.name_first_video.set(file_path))
-        finally:
-            print(self.path)
+        except Exception as e:
+            print(e)
 
     def select_second_video(self):
         thread = threading.Thread(target=self.select_video_file_second)
@@ -154,8 +167,8 @@ class Redactor:
 
     def select_video_file_second(self):
         try:
-            file_path = Explorer(self.video_output_path, self.video_output_path)
-            if file_path:
+            file_path = str(Explorer(self.video_output_path, self.video_output_path))
+            if str(Path(file_path)) != 0:
                 self.path_2 = file_path
             self.root.after(0, lambda: self.name_second_video.set(file_path))
 
@@ -166,9 +179,6 @@ class Redactor:
                 "error",
                 str(e)
             ])
-
-        finally:
-            print(self.path)
 
     def glue_video_thread(self):
         self.button_glue.config(state="disabled")

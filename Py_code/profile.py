@@ -2,19 +2,10 @@ from button_modul import *
 import os
 import json
 
-def fix_path(path):
-    if path is None:
-        return None
-    elif path.startswith('"') and path.endswith('"'):
-        path = path[1:-1]
-    if "\\" in path:
-        path = path.replace("\\", "/")
-
-    return path
 
 def add_and_create_profile_to_json(Nik, Password, path, json_path, json_name = 'Profile_Data.json'):
 
-    full_output_path = fix_path(json_path) + "/" + json_name
+    full_output_path = json_path + "/" + json_name
 
     parent_dir = os.path.dirname(full_output_path)
     if parent_dir:
@@ -23,7 +14,7 @@ def add_and_create_profile_to_json(Nik, Password, path, json_path, json_name = '
     profile_dict = {}
     if len(Nik)>1 and len(str(Password))>1:
         complete = True
-        profile_dict[Nik] = {"Password" : fix_path(Password), "Video_path" : fix_path(path), "Fon_path" : ""}
+        profile_dict[Nik] = {"Password" : Password, "Video_path" : path, "Fon_path" : ""}
     else:
         complete = False
 

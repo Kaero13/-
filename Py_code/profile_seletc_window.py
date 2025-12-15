@@ -6,7 +6,6 @@ class Profile:
         self.dubl = dubl
         self.fon = ""
         if self.prov is None:
-            print(">" + f"{self.prov}")
             return
 
         if self.dubl != True:
@@ -274,7 +273,6 @@ class Profile:
 
         root.eval('tk::PlaceWindow . center')
         root.resizable(False, False)
-        root.geometry('265x100')
         root.protocol("WM_DELETE_WINDOW", exit_command)
         button_frame = tk.Frame(root)
         button_frame.grid(row = 1, column = 0)
@@ -287,13 +285,3 @@ class Profile:
 
         root.mainloop()
 
-if __name__ == "__main__":
-    import sys
-    if len(sys.argv) == 3:
-        dubl = sys.argv[1]
-        prov = sys.argv[2]
-        if dubl == str(True):
-            dubl = True
-        if prov == str(False):
-            prov = False
-        Profile(dubl, prov)
