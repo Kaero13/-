@@ -47,7 +47,6 @@ def in_user_folder(path_user_folder):
         folder_path = project_root / folder
         folder_path.mkdir(exist_ok=True)
 
-
 def project_Folders():
     script_dir = Path(__file__).parent
 
@@ -70,4 +69,11 @@ def project_Folders():
             except Exception as e:
                 print(f"Ошибка удаления при запуске {file_path}: {e}")
 
-
+def creat_standart_settins():
+    os.makedirs(f"{Path(__file__).parent}/settings", exist_ok=True)
+    with open(f"{Path(__file__).parent}/settings/settings.json", "w") as f:
+        standart_settings = {
+            "screen": ["800", "600"],
+            "mode": "screen"
+        }
+        json.dump(standart_settings, f)
