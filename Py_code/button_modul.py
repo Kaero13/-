@@ -45,7 +45,7 @@ def in_user_folder(path_user_folder):
     # Создаем папки в родительской директории
     for folder in folders:
         folder_path = project_root / folder
-        folder_path.mkdir(exist_ok=True)
+        folder_path.mkdir(parents=True,exist_ok=True)
 
 def project_Folders():
     script_dir = Path(__file__).parent
