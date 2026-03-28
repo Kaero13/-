@@ -3,9 +3,7 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtMultimedia import *
 from PyQt6.QtMultimediaWidgets import *
-from profile import add_and_create_profile_to_json
 import os.path
-from tkinter import ttk
 from pathlib import Path
 import pymediainfo as mt
 from moviepy import VideoFileClip, concatenate_videoclips
@@ -13,12 +11,13 @@ import threading
 import json
 import cv2
 import numpy as np
-import subprocess
 import sys
 import os
 import shutil
-import tkinter as tk
-from tkinter import filedialog, messagebox
+import os.path
+from functools import partial
+import threading
+import time
 
 def get_path():
     Py_code_dir = Path(__file__).parent
@@ -44,7 +43,7 @@ def in_user_folder(path_user_folder):
 
     # Создаем папки в родительской директории
     for folder in folders:
-        folder_path = project_root / folder
+        folder_path = Path(os.path.join(project_root, folder))
         folder_path.mkdir(parents=True,exist_ok=True)
 
 def project_Folders():
@@ -55,8 +54,10 @@ def project_Folders():
 
     # Создаем папку в родительской директории
 
-    folder_path = project_root / "temp"
-    folder_path.mkdir(exist_ok=True)
+    folder_path_profile = project_root / "Profile_data"
+    folder_path_temp = project_root / "temp"
+    folder_path_temp.mkdir(exist_ok=True)
+    folder_path_profile.mkdir(exist_ok=True)
 
     # Очистка папки temp
     temp_path = project_root / 'temp'
