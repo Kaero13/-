@@ -3,13 +3,7 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtMultimedia import *
 from PyQt6.QtMultimediaWidgets import *
-from tkinter import filedialog, messagebox
-from profile import add_and_create_profile_to_json
 import os.path
-from pathlib import Path
-import button_modul
-import json
-from tkinter import ttk
 from pathlib import Path
 import pymediainfo as mt
 from moviepy import VideoFileClip, concatenate_videoclips
@@ -17,51 +11,13 @@ import threading
 import json
 import cv2
 import numpy as np
-import subprocess
 import sys
 import os
 import shutil
-import pygame
-import tkinter as tk
-from tkinter import filedialog, messagebox
-
-pygame.init()
-
-
-def select_video_file():
-    root = tk.Tk()
-    root.withdraw()
-
-    videos_path = os.path.abspath('videos')
-    if not os.path.exists('videos'):
-        os.makedirs(videos_path)
-    file_path = filedialog.askopenfilename(
-        title="Выберите видео файл",
-        initialdir=videos_path,
-        filetypes=[
-            ("Видео файлы", "*.mp4 *.avi *.mov *.mkv *.wmv"),
-            ("Все файлы", "*.*")
-        ])
-    root.destroy()
-    return file_path
-
-def dowload_video_file():
-    root = tk.Tk()
-    root.withdraw()
-
-
-    file_path = filedialog.askopenfilename(
-        title="Выберите видео файл",
-        filetypes=[
-            ("Видео файлы", "*.mp4 *.avi *.mov *.mkv *.wmv"),
-            ("Все файлы", "*.*")
-        ])
-    root.destroy()
-    return file_path
-
-
-import os
-from pathlib import Path
+import os.path
+from functools import partial
+import threading
+import time
 
 def get_path():
     Py_code_dir = Path(__file__).parent
@@ -87,9 +43,8 @@ def in_user_folder(path_user_folder):
 
     # Создаем папки в родительской директории
     for folder in folders:
-        folder_path = project_root / folder
-        folder_path.mkdir(exist_ok=True)
-
+        folder_path = Path(os.path.join(project_root, folder))
+        folder_path.mkdir(parents=True,exist_ok=True)
 
 def project_Folders():
     script_dir = Path(__file__).parent
@@ -99,8 +54,10 @@ def project_Folders():
 
     # Создаем папку в родительской директории
 
-    folder_path = project_root / "temp"
-    folder_path.mkdir(exist_ok=True)
+    folder_path_profile = project_root / "Profile_data"
+    folder_path_temp = project_root / "temp"
+    folder_path_temp.mkdir(exist_ok=True)
+    folder_path_profile.mkdir(exist_ok=True)
 
     # Очистка папки temp
     temp_path = project_root / 'temp'
@@ -113,11 +70,11 @@ def project_Folders():
             except Exception as e:
                 print(f"Ошибка удаления при запуске {file_path}: {e}")
 
-def create_rounded_rectangle():
-    rect_surface = pygame.Surface((890, 520), pygame.SRCALPHA)
-    fill_color = (80, 130, 200, 255)
-    border_color = (40, 80, 150, 255)
-    pygame.draw.rect(rect_surface, fill_color, (0, 0, 890, 520), border_radius=25)
-    pygame.draw.rect(rect_surface, border_color, (0, 0, 890, 520), width=3, border_radius=25)
-    return rect_surface
-
+def creat_standart_settins():
+    os.makedirs(f"{Path(__file__).parent}/settings", exist_ok=True)
+    with open(f"{Path(__file__).parent}/settings/settings.json", "w") as f:
+        standart_settings = {
+            "screen": ["800", "600"],
+            "mode": "screen"
+        }
+        json.dump(standart_settings, f)
